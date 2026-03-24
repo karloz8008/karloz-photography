@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Karloz Photography | Portrait & Headshot Photographer Los Angeles</title>
+  <meta name="description" content="Karloz Photography — Professional portrait and headshot photographer in Los Angeles, CA. Serving actors, professionals, and creatives. Book your session today." />
+  <meta name="keywords" content="headshot photographer Los Angeles, portrait photographer LA, actor headshots Los Angeles, professional headshots LA, Karloz Photography" />
+  <meta property="og:title" content="Karloz Photography | Portrait & Headshot Photographer Los Angeles" />
+  <meta property="og:description" content="Stunning portraits and headshots for actors, professionals, and creatives in Los Angeles." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-name">KARLOZ</span>
+        <span class="logo-sub">Photography</span>
+        <span class="logo-tag">Portraits &amp; Headshots · Los Angeles</span>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html" class="nav-link active">Portfolio</a>
+        <a href="testimonials.html" class="nav-link">Testimonials</a>
+        <a href="about.html" class="nav-link">About &amp; Contact</a>
+        <a href="about.html#contact" class="nav-cta">Book a Session</a>
+      </nav>
+      <button class="hamburger" aria-label="Open menu" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-nav" id="mobileNav">
+      <a href="index.html" onclick="toggleMenu()">Portfolio</a>
+      <a href="testimonials.html" onclick="toggleMenu()">Testimonials</a>
+      <a href="about.html" onclick="toggleMenu()">About &amp; Contact</a>
+      <a href="about.html#contact" onclick="toggleMenu()">Book a Session</a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg">
+      <!-- Replace hero.jpg with your best portrait -->
+      <img src="photos/hero.jpg" alt="Portrait photography Los Angeles" />
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="eyebrow">Los Angeles · Studio &amp; On Location</p>
+      <h1 class="hero-title">Every face<br /><em>tells a story.</em></h1>
+      <p class="hero-body">Professional headshots &amp; portraits for actors, executives, and creatives in Los Angeles. Cinematic lighting. Natural expression. Images that open doors.</p>
+      <a href="about.html#contact" class="btn-primary">Book Your Session</a>
+    </div>
+  </section>
+
+  <!-- SEO TEXT -->
+  <div class="seo-strip">
+    <p><strong>Karloz Photography</strong> specializes in actor headshots, corporate portraits, and creative photography in Los Angeles, CA. Whether you're a SAG actor preparing for your next audition or a professional building your personal brand, every session is crafted to capture your authentic presence. Available for studio sessions and on-location shoots across the greater Los Angeles area.</p>
+  </div>
+
+  <!-- GRID HEADER -->
+  <div class="grid-header">
+    <span class="grid-label">Portfolio</span>
+    <div class="grid-rule"></div>
+  </div>
+
+  <!-- ============================================================
+    PHOTO GRID — HOW TO ADD / REMOVE PHOTOS:
+
+    Each .grid-item represents ONE session on the main grid.
+    Use data-session="session-name" to group photos together.
+    All photos with the same session name will appear when clicked.
+
+    ATTRIBUTES:
+      data-session  = unique name for this shoot (e.g. "actor-sofia")
+      data-label    = display name shown in gallery header
+      data-full     = path to full-res version (can be same as src)
+
+    TO ADD A NEW SESSION: copy one .grid-item block, paste it,
+    update the image src, data-session, data-label, and data-full.
+
+    TO ADD MORE PHOTOS TO A SESSION: add more .grid-item elements
+    with the SAME data-session value. Only the FIRST one shows
+    on the main grid — the rest appear when the session opens.
+    Use the class "grid-item session-extra" on the extra photos
+    and they will be hidden on the main grid automatically.
+
+    TO REMOVE: delete the entire .grid-item block.
+  ============================================================ -->
+
+  <div class="photo-grid">
+
+    <!-- SESSION 1: Actor - Blue Background -->
+    <div class="grid-item"
+         data-session="actor-blue"
+         data-label="Actor Session — Blue"
+         data-full="photos/actor-blue-1.jpg">
+      <img src="photos/actor-blue-1.jpg" alt="Actor headshot Los Angeles" loading="lazy" />
+    </div>
+    <div class="grid-item session-extra"
+         data-session="actor-blue"
+         data-label="Actor Session — Blue"
+         data-full="photos/actor-blue-2.jpg">
+      <img src="photos/actor-blue-2.jpg" alt="Actor headshot Los Angeles" loading="lazy" />
+    </div>
+    <div class="grid-item session-extra"
+         data-session="actor-blue"
+         data-label="Actor Session — Blue"
+         data-full="photos/actor-blue-3.jpg">
+      <img src="photos/actor-blue-3.jpg" alt="Actor headshot Los Angeles" loading="lazy" />
+    </div>
+    <div class="grid-item session-extra"
+         data-session="actor-blue"
+         data-label="Actor Session — Blue"
+         data-full="photos/actor-blue-4.jpg">
+      <img src="photos/actor-blue-4.jpg" alt="Actor headshot Los Angeles" loading="lazy" />
+    </div>
+
+    <!-- SESSION 2: Actor - Yellow Background -->
+    <div class="grid-item"
+         data-session="actor-yellow"
+         data-label="Actor Session — Yellow"
+         data-full="photos/actor-yellow-1.jpg">
+      <img src="photos/actor-yellow-1.jpg" alt="Actor portrait Los Angeles" loading="lazy" />
+    </div>
+    <div class="grid-item session-extra"
+         data-session="actor-yellow"
+         data-label="Actor Session — Yellow"
+         data-full="photos/actor-yellow-2.jpg">
+      <img src="photos/actor-yellow-2.jpg" alt="Actor portrait Los Angeles" loading="lazy" />
+    </div>
+    <div class="grid-item session-extra"
+         data-session="actor-yellow"
+         data-label="Actor Session — Yellow"
+         data-full="photos/actor-yellow-3.jpg">
+      <img src="photos/actor-yellow-3.jpg" alt="Actor portrait Los Angeles" loading="lazy" />
+    </div>
+    <div class="grid-item session-extra"
+         data-session="actor-yellow"
+         data-label="Actor Session — Yellow"
+         data-full="photos/actor-yellow-4.jpg">
+      <img src="photos/actor-yellow-4.jpg" alt="Actor portrait Los Angeles" loading="lazy" />
+    </div>
+
+    <!-- SESSION 3: Corporate Portrait -->
+    <div class="grid-item"
+         data-session="corporate-1"
+         data-label="Corporate Portrait"
+         data-full="photos/corp-1.jpg">
+      <img src="photos/corp-1.jpg" alt="Corporate headshot Los Angeles" loading="lazy" />
+    </div>
+    <div class="grid-item session-extra"
+         data-session="corporate-1"
+         data-label="Corporate Portrait"
+         data-full="photos/corp-2.jpg">
+      <img src="photos/corp-2.jpg" alt="Corporate headshot Los Angeles" loading="lazy" />
+    </div>
+
+    <!-- SESSION 4: Creative Portrait -->
+    <div class="grid-item"
+         data-session="creative-1"
+         data-label="Creative Session"
+         data-full="photos/creative-1.jpg">
+      <img src="photos/creative-1.jpg" alt="Creative portrait Los Angeles" loading="lazy" />
+    </div>
+    <div class="grid-item session-extra"
+         data-session="creative-1"
+         data-label="Creative Session"
+         data-full="photos/creative-2.jpg">
+      <img src="photos/creative-2.jpg" alt="Creative portrait Los Angeles" loading="lazy" />
+    </div>
+
+    <!-- ADD MORE SESSIONS BELOW FOLLOWING THE SAME PATTERN -->
+
+  </div>
+
+  <!-- SESSION GALLERY OVERLAY -->
+  <div class="session-overlay" id="sessionOverlay">
+    <div class="session-header">
+      <span class="session-title" id="sessionTitle">Session</span>
+      <button class="session-close" id="sessionClose" aria-label="Close gallery">&#10005;</button>
+    </div>
+    <div class="session-grid" id="sessionGrid"></div>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Close">&#10005;</button>
+    <button class="lightbox-prev" id="lightboxPrev" aria-label="Previous">&#8592;</button>
+    <img class="lightbox-img" id="lightboxImg" src="" alt="" />
+    <button class="lightbox-next" id="lightboxNext" aria-label="Next">&#8594;</button>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="logo">
+        <span class="logo-name">KARLOZ</span>
+        <span class="logo-sub">Photography</span>
+      </div>
+      <div class="footer-contact">
+        <a href="mailto:karloz8008@gmail.com">karloz8008@gmail.com</a>
+        <a href="https://www.instagram.com/karloz8008" target="_blank" rel="noopener">@karloz8008</a>
+        <a href="tel:+18185682983">(818) 568-2983</a>
+      </div>
+    </div>
+    <div class="footer-nav">
+      <a href="index.html">Portfolio</a>
+      <a href="testimonials.html">Testimonials</a>
+      <a href="about.html">About &amp; Contact</a>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Karloz Photography · Los Angeles, CA · All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

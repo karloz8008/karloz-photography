@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About &amp; Contact | Karloz Photography Los Angeles</title>
+  <meta name="description" content="About Karloz Photography — portrait and headshot photographer based in Los Angeles. Book your session today." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-name">KARLOZ</span>
+        <span class="logo-sub">Photography</span>
+        <span class="logo-tag">Portraits &amp; Headshots · Los Angeles</span>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html" class="nav-link">Portfolio</a>
+        <a href="testimonials.html" class="nav-link">Testimonials</a>
+        <a href="about.html" class="nav-link active">About &amp; Contact</a>
+        <a href="about.html#contact" class="nav-cta">Book a Session</a>
+      </nav>
+      <button class="hamburger" aria-label="Open menu" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-nav" id="mobileNav">
+      <a href="index.html" onclick="toggleMenu()">Portfolio</a>
+      <a href="testimonials.html" onclick="toggleMenu()">Testimonials</a>
+      <a href="about.html" onclick="toggleMenu()">About &amp; Contact</a>
+      <a href="about.html#contact" onclick="toggleMenu()">Book a Session</a>
+    </div>
+  </header>
+
+  <div style="max-width:1400px;margin:0 auto;">
+    <section class="page-hero">
+      <p class="eyebrow">The Photographer</p>
+      <h1>About<br /><em>Karloz</em></h1>
+    </section>
+  </div>
+
+  <section class="about-section">
+    <div class="about-inner">
+
+      <div class="about-photo">
+        <!-- Replace with your photo: <img src="photos/karloz.jpg" alt="Karloz — Portrait Photographer Los Angeles" /> -->
+        <div class="about-photo-placeholder">
+          <span>Your Photo Here</span>
+          <small>Replace in about.html</small>
+        </div>
+      </div>
+
+      <div class="about-bio">
+        <!-- EDIT YOUR BIO HERE -->
+        <h2>Behind the Lens</h2>
+        <p class="about-lead">I'm Karloz — a SAG actor turned photographer based in Los Angeles. That actor's perspective is my secret weapon behind the camera.</p>
+        <p>I know what it feels like to sit in front of a lens. The vulnerability, the pressure to perform, the hope that the camera catches something real. That understanding shapes every session I shoot. My job isn't just to take photos — it's to create the conditions where <em>you</em> can show up authentically.</p>
+        <p>Based in Los Angeles with a private home studio, I specialize in actor headshots, corporate portraits, and creative sessions for individuals who want images that genuinely represent them. Natural light and cinematic studio lighting. Relaxed direction. Fast, clean edits.</p>
+        <p>Whether you're submitting to casting directors, updating your LinkedIn, or building your personal brand — let's make something powerful together.</p>
+        <div class="about-details">
+          <div class="about-detail-item">
+            <span class="detail-label">Location</span>
+            <span class="detail-value">Los Angeles, California</span>
+          </div>
+          <div class="about-detail-item">
+            <span class="detail-label">Specialties</span>
+            <span class="detail-value">Actor Headshots · Corporate Portraits · Creative Sessions</span>
+          </div>
+          <div class="about-detail-item">
+            <span class="detail-label">Studio</span>
+            <span class="detail-value">Private Home Studio · On-Location Available</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact-section" id="contact">
+    <p class="eyebrow">Let's Work Together</p>
+    <h2>Book a Session</h2>
+    <p class="contact-sub">Reach out through any channel below. I typically respond within 24 hours.</p>
+    <div class="contact-cards">
+      <a href="mailto:karloz8008@gmail.com" class="contact-card">
+        <div class="contact-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <path d="M2 7l10 7 10-7"/>
+          </svg>
+        </div>
+        <span class="contact-label">Email</span>
+        <span class="contact-val">karloz8008@gmail.com</span>
+      </a>
+      <a href="https://www.instagram.com/karloz8008" target="_blank" rel="noopener" class="contact-card">
+        <div class="contact-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="2" y="2" width="20" height="20" rx="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="0.5" fill="#C9A96E" stroke="none"/>
+          </svg>
+        </div>
+        <span class="contact-label">Instagram</span>
+        <span class="contact-val">@karloz8008</span>
+      </a>
+      <a href="tel:+18185682983" class="contact-card">
+        <div class="contact-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.01 2.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92v2z"/>
+          </svg>
+        </div>
+        <span class="contact-label">Phone / Text</span>
+        <span class="contact-val">(818) 568-2983</span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="logo">
+        <span class="logo-name">KARLOZ</span>
+        <span class="logo-sub">Photography</span>
+      </div>
+      <div class="footer-contact">
+        <a href="mailto:karloz8008@gmail.com">karloz8008@gmail.com</a>
+        <a href="https://www.instagram.com/karloz8008" target="_blank" rel="noopener">@karloz8008</a>
+        <a href="tel:+18185682983">(818) 568-2983</a>
+      </div>
+    </div>
+    <div class="footer-nav">
+      <a href="index.html">Portfolio</a>
+      <a href="testimonials.html">Testimonials</a>
+      <a href="about.html">About &amp; Contact</a>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Karloz Photography · Los Angeles, CA · All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

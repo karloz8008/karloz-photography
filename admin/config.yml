@@ -1,0 +1,68 @@
+backend:
+  name: github
+  repo: karloz8008/karloz-photography
+  branch: main
+
+media_folder: "photos"
+public_folder: "/photos"
+
+collections:
+
+  - name: "settings"
+    label: "Site Settings"
+    files:
+      - name: "general"
+        label: "General Info"
+        file: "_data/settings.json"
+        fields:
+          - { label: "Site Title", name: "title", widget: "string" }
+          - { label: "Tagline", name: "tagline", widget: "string" }
+          - { label: "SEO Description", name: "seo_description", widget: "text" }
+          - { label: "Email", name: "email", widget: "string" }
+          - { label: "Phone", name: "phone", widget: "string" }
+          - { label: "Instagram Handle", name: "instagram", widget: "string" }
+
+  - name: "testimonials"
+    label: "Testimonials"
+    folder: "_data/testimonials"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Client Name", name: "name", widget: "string" }
+      - { label: "Role / Profession", name: "role", widget: "string" }
+      - { label: "Initials (2 letters)", name: "initials", widget: "string" }
+      - { label: "Testimonial Text", name: "quote", widget: "text" }
+      - { label: "Display Order", name: "order", widget: "number", default: 99 }
+
+  - name: "sessions"
+    label: "Photo Sessions"
+    folder: "_data/sessions"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Session Name", name: "title", widget: "string" }
+      - { label: "Session ID (no spaces, use dashes)", name: "session_id", widget: "string" }
+      - { label: "Hero Photo (shown on main grid)", name: "hero_photo", widget: "image" }
+      - label: "All Photos in this Session"
+        name: "photos"
+        widget: "list"
+        fields:
+          - { label: "Photo", name: "image", widget: "image" }
+          - { label: "Alt Text (for SEO)", name: "alt", widget: "string" }
+
+  - name: "pages"
+    label: "Page Content"
+    files:
+      - name: "about"
+        label: "About Page"
+        file: "_data/about.json"
+        fields:
+          - { label: "Page Heading", name: "heading", widget: "string" }
+          - { label: "Lead Paragraph", name: "lead", widget: "text" }
+          - { label: "Bio Paragraph 1", name: "bio1", widget: "text" }
+          - { label: "Bio Paragraph 2", name: "bio2", widget: "text" }
+          - { label: "Bio Paragraph 3", name: "bio3", widget: "text" }
+          - { label: "Your Photo", name: "photo", widget: "image" }
+          - { label: "Location", name: "location", widget: "string" }
+          - { label: "Specialties", name: "specialties", widget: "string" }
+          - { label: "Studio Info", name: "studio", widget: "string" }
