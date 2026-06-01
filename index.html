@@ -16,6 +16,7 @@
 </head>
 <body>
 
+  <!-- HEADER -->
   <header class="site-header">
     <div class="header-inner">
       <a href="index.html" class="logo">
@@ -27,7 +28,7 @@
         <a href="index.html" class="nav-link active">Portfolio</a>
         <a href="testimonials.html" class="nav-link">Testimonials</a>
         <a href="about.html" class="nav-link">About &amp; Contact</a>
-        <a href="about.html#contact" class="nav-cta">Book a Session</a>
+        <a href="https://calendar.app.google/1TLee6nQDUrWV8zC6" target="_blank" rel="noopener" class="nav-cta">Book a Session</a>
       </nav>
       <button class="hamburger" aria-label="Open menu" onclick="toggleMenu()">
         <span></span><span></span><span></span>
@@ -37,195 +38,147 @@
       <a href="index.html" onclick="toggleMenu()">Portfolio</a>
       <a href="testimonials.html" onclick="toggleMenu()">Testimonials</a>
       <a href="about.html" onclick="toggleMenu()">About &amp; Contact</a>
-      <a href="about.html#contact" onclick="toggleMenu()">Book a Session</a>
+      <a href="https://calendar.app.google/1TLee6nQDUrWV8zC6" target="_blank" rel="noopener" onclick="toggleMenu()">Book a Session</a>
     </div>
   </header>
 
+  <!-- HERO -->
   <section class="hero">
     <div class="hero-bg">
-      <img src="photos/1Cover_Lidia_reflector.jpg" alt="Portrait photography Los Angeles" />
+      <!-- Replace hero.jpg with your best portrait -->
+      <img src="photos/hero.jpg" alt="Portrait photography Los Angeles" />
     </div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <p class="eyebrow">Los Angeles · Studio &amp; On Location</p>
       <h1 class="hero-title">Every face<br /><em>tells a story.</em></h1>
       <p class="hero-body">Professional headshots &amp; portraits for actors, executives, and creatives in Los Angeles. Cinematic lighting. Natural expression. Images that open doors.</p>
-      <a href="about.html#contact" class="btn-primary">Book Your Session</a>
+      <a href="https://calendar.app.google/1TLee6nQDUrWV8zC6" target="_blank" rel="noopener" class="btn-primary">Book Your Session</a>
     </div>
   </section>
 
+  <!-- SEO TEXT -->
   <div class="seo-strip">
     <p><strong>Karloz Photography</strong> specializes in actor headshots, corporate portraits, and creative photography in Los Angeles, CA. Whether you're a SAG actor preparing for your next audition or a professional building your personal brand, every session is crafted to capture your authentic presence. Available for studio sessions and on-location shoots across the greater Los Angeles area.</p>
   </div>
 
+  <!-- GRID HEADER -->
   <div class="grid-header">
     <span class="grid-label">Portfolio</span>
     <div class="grid-rule"></div>
   </div>
 
+  <!-- ============================================================
+    PHOTO GRID — HOW TO ADD / REMOVE PHOTOS:
+
+    Each .grid-item represents ONE session on the main grid.
+    Use data-session="session-name" to group photos together.
+    All photos with the same session name will appear when clicked.
+
+    ATTRIBUTES:
+      data-session  = unique name for this shoot (e.g. "actor-sofia")
+      data-label    = display name shown in gallery header
+      data-full     = path to full-res version (can be same as src)
+
+    TO ADD A NEW SESSION: copy one .grid-item block, paste it,
+    update the image src, data-session, data-label, and data-full.
+
+    TO ADD MORE PHOTOS TO A SESSION: add more .grid-item elements
+    with the SAME data-session value. Only the FIRST one shows
+    on the main grid — the rest appear when the session opens.
+    Use the class "grid-item session-extra" on the extra photos
+    and they will be hidden on the main grid automatically.
+
+    TO REMOVE: delete the entire .grid-item block.
+  ============================================================ -->
+
   <div class="photo-grid">
 
-    <!-- Giorgia -->
-    <div class="grid-item" data-session="giorgia" data-label="Giorgia" data-full="photos/Giorgia.jpg">
-      <img src="photos/Giorgia.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="giorgia" data-label="Giorgia" data-full="photos/giorgia2.jpg">
-      <img src="photos/giorgia2.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="giorgia" data-label="Giorgia" data-full="photos/giorgia_horizontal.jpg">
-      <img src="photos/giorgia_horizontal.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="giorgia" data-label="Giorgia" data-full="photos/gio-3_crop.jpg">
-      <img src="photos/gio-3_crop.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
+    <!-- SESSION 1: Actor - Blue Background -->
+    <div class="grid-item"
+         data-session="actor-blue"
+         data-label="Actor Session — Blue"
+         data-full="photos/actor-blue-1.jpg">
+      <img src="photos/actor-blue-1.jpg" alt="Actor headshot Los Angeles" loading="lazy" />
+    </div>
+    <div class="grid-item session-extra"
+         data-session="actor-blue"
+         data-label="Actor Session — Blue"
+         data-full="photos/actor-blue-2.jpg">
+      <img src="photos/actor-blue-2.jpg" alt="Actor headshot Los Angeles" loading="lazy" />
+    </div>
+    <div class="grid-item session-extra"
+         data-session="actor-blue"
+         data-label="Actor Session — Blue"
+         data-full="photos/actor-blue-3.jpg">
+      <img src="photos/actor-blue-3.jpg" alt="Actor headshot Los Angeles" loading="lazy" />
+    </div>
+    <div class="grid-item session-extra"
+         data-session="actor-blue"
+         data-label="Actor Session — Blue"
+         data-full="photos/actor-blue-4.jpg">
+      <img src="photos/actor-blue-4.jpg" alt="Actor headshot Los Angeles" loading="lazy" />
+    </div>
 
-    <!-- Andres Zuniga -->
-    <div class="grid-item" data-session="andres" data-label="Andres Zuniga" data-full="photos/andres_zuniga.jpg">
-      <img src="photos/andres_zuniga.jpg" alt="Actor headshot Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="andres" data-label="Andres Zuniga" data-full="photos/andres_zuniga2.jpg">
-      <img src="photos/andres_zuniga2.jpg" alt="Actor headshot Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="andres" data-label="Andres Zuniga" data-full="photos/andres_zuniga3.jpg">
-      <img src="photos/andres_zuniga3.jpg" alt="Actor headshot Los Angeles" loading="lazy" /></div>
+    <!-- SESSION 2: Actor - Yellow Background -->
+    <div class="grid-item"
+         data-session="actor-yellow"
+         data-label="Actor Session — Yellow"
+         data-full="photos/actor-yellow-1.jpg">
+      <img src="photos/actor-yellow-1.jpg" alt="Actor portrait Los Angeles" loading="lazy" />
+    </div>
+    <div class="grid-item session-extra"
+         data-session="actor-yellow"
+         data-label="Actor Session — Yellow"
+         data-full="photos/actor-yellow-2.jpg">
+      <img src="photos/actor-yellow-2.jpg" alt="Actor portrait Los Angeles" loading="lazy" />
+    </div>
+    <div class="grid-item session-extra"
+         data-session="actor-yellow"
+         data-label="Actor Session — Yellow"
+         data-full="photos/actor-yellow-3.jpg">
+      <img src="photos/actor-yellow-3.jpg" alt="Actor portrait Los Angeles" loading="lazy" />
+    </div>
+    <div class="grid-item session-extra"
+         data-session="actor-yellow"
+         data-label="Actor Session — Yellow"
+         data-full="photos/actor-yellow-4.jpg">
+      <img src="photos/actor-yellow-4.jpg" alt="Actor portrait Los Angeles" loading="lazy" />
+    </div>
 
-    <!-- Delia Niya -->
-    <div class="grid-item" data-session="delia" data-label="Delia Niya" data-full="photos/delia_niya.jpg">
-      <img src="photos/delia_niya.jpg" alt="Headshot photographer Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="delia" data-label="Delia Niya" data-full="photos/delia_niya2.jpg">
-      <img src="photos/delia_niya2.jpg" alt="Headshot photographer Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="delia" data-label="Delia Niya" data-full="photos/delia_niya3.jpg">
-      <img src="photos/delia_niya3.jpg" alt="Headshot photographer Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="delia" data-label="Delia Niya" data-full="photos/delia_niya4.jpg">
-      <img src="photos/delia_niya4.jpg" alt="Headshot photographer Los Angeles" loading="lazy" /></div>
+    <!-- SESSION 3: Corporate Portrait -->
+    <div class="grid-item"
+         data-session="corporate-1"
+         data-label="Corporate Portrait"
+         data-full="photos/corp-1.jpg">
+      <img src="photos/corp-1.jpg" alt="Corporate headshot Los Angeles" loading="lazy" />
+    </div>
+    <div class="grid-item session-extra"
+         data-session="corporate-1"
+         data-label="Corporate Portrait"
+         data-full="photos/corp-2.jpg">
+      <img src="photos/corp-2.jpg" alt="Corporate headshot Los Angeles" loading="lazy" />
+    </div>
 
-    <!-- Kristina -->
-    <div class="grid-item" data-session="kristina" data-label="Kristina" data-full="photos/kristina.jpg">
-      <img src="photos/kristina.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="kristina" data-label="Kristina" data-full="photos/kristina2.jpg">
-      <img src="photos/kristina2.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="kristina" data-label="Kristina" data-full="photos/kristina3.jpg">
-      <img src="photos/kristina3.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="kristina" data-label="Kristina" data-full="photos/kristina4.jpg">
-      <img src="photos/kristina4.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
+    <!-- SESSION 4: Creative Portrait -->
+    <div class="grid-item"
+         data-session="creative-1"
+         data-label="Creative Session"
+         data-full="photos/creative-1.jpg">
+      <img src="photos/creative-1.jpg" alt="Creative portrait Los Angeles" loading="lazy" />
+    </div>
+    <div class="grid-item session-extra"
+         data-session="creative-1"
+         data-label="Creative Session"
+         data-full="photos/creative-2.jpg">
+      <img src="photos/creative-2.jpg" alt="Creative portrait Los Angeles" loading="lazy" />
+    </div>
 
-    <!-- Laura -->
-    <div class="grid-item" data-session="laura" data-label="Laura" data-full="photos/laura.jpg">
-      <img src="photos/laura.jpg" alt="Actor headshot Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="laura" data-label="Laura" data-full="photos/laura2.jpg">
-      <img src="photos/laura2.jpg" alt="Actor headshot Los Angeles" loading="lazy" /></div>
-
-    <!-- Lidya -->
-    <div class="grid-item" data-session="lidya" data-label="Lidya" data-full="photos/lidya.jpg">
-      <img src="photos/lidya.jpg" alt="Creative portrait Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="lidya" data-label="Lidya" data-full="photos/lidya2.jpg">
-      <img src="photos/lidya2.jpg" alt="Creative portrait Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="lidya" data-label="Lidya" data-full="photos/lidya3.jpg">
-      <img src="photos/lidya3.jpg" alt="Creative portrait Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="lidya" data-label="Lidya" data-full="photos/lidya4.jpg">
-      <img src="photos/lidya4.jpg" alt="Creative portrait Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="lidya" data-label="Lidya" data-full="photos/lidya5.jpg">
-      <img src="photos/lidya5.jpg" alt="Creative portrait Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="lidya" data-label="Lidya" data-full="photos/lidya_reflector.jpg">
-      <img src="photos/lidya_reflector.jpg" alt="Creative portrait Los Angeles" loading="lazy" /></div>
-
-    <!-- Marie Rseu -->
-    <div class="grid-item" data-session="marie" data-label="Marie Rseu" data-full="photos/marie_rseu.jpg">
-      <img src="photos/marie_rseu.jpg" alt="Actress headshot Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="marie" data-label="Marie Rseu" data-full="photos/marie_rseu2.jpg">
-      <img src="photos/marie_rseu2.jpg" alt="Actress headshot Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="marie" data-label="Marie Rseu" data-full="photos/marie_rseu3.jpg">
-      <img src="photos/marie_rseu3.jpg" alt="Actress headshot Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="marie" data-label="Marie Rseu" data-full="photos/marie_rseu4.jpg">
-      <img src="photos/marie_rseu4.jpg" alt="Actress headshot Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="marie" data-label="Marie Rseu" data-full="photos/marie_rseu6.jpg">
-      <img src="photos/marie_rseu6.jpg" alt="Actress headshot Los Angeles" loading="lazy" /></div>
-
-    <!-- Nadia -->
-    <div class="grid-item" data-session="nadia" data-label="Nadia" data-full="photos/nadia.jpg">
-      <img src="photos/nadia.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="nadia" data-label="Nadia" data-full="photos/nadia2.jpg">
-      <img src="photos/nadia2.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="nadia" data-label="Nadia" data-full="photos/nadia3.jpg">
-      <img src="photos/nadia3.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
-
-    <!-- Natalie -->
-    <div class="grid-item" data-session="natalie" data-label="Natalie" data-full="photos/natalie.jpg">
-      <img src="photos/natalie.jpg" alt="Headshot photographer Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="natalie" data-label="Natalie" data-full="photos/natalie2.jpg">
-      <img src="photos/natalie2.jpg" alt="Headshot photographer Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="natalie" data-label="Natalie" data-full="photos/natalie3.jpg">
-      <img src="photos/natalie3.jpg" alt="Headshot photographer Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="natalie" data-label="Natalie" data-full="photos/natalie4.jpg">
-      <img src="photos/natalie4.jpg" alt="Headshot photographer Los Angeles" loading="lazy" /></div>
-
-    <!-- Phil Robinson -->
-    <div class="grid-item" data-session="phil" data-label="Phil Robinson" data-full="photos/phil_robinson.jpg">
-      <img src="photos/phil_robinson.jpg" alt="Actor headshot Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="phil" data-label="Phil Robinson" data-full="photos/phil_robinson2.jpg">
-      <img src="photos/phil_robinson2.jpg" alt="Actor headshot Los Angeles" loading="lazy" /></div>
-
-    <!-- Stella -->
-    <div class="grid-item" data-session="stella" data-label="Stella" data-full="photos/stella.jpg">
-      <img src="photos/stella.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="stella" data-label="Stella" data-full="photos/stella2.jpg">
-      <img src="photos/stella2.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="stella" data-label="Stella" data-full="photos/stella3.jpg">
-      <img src="photos/stella3.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
-
-    <!-- Thomas -->
-    <div class="grid-item" data-session="thomas" data-label="Thomas" data-full="photos/thomas.jpg">
-      <img src="photos/thomas.jpg" alt="Actor headshot Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="thomas" data-label="Thomas" data-full="photos/thomas2.jpg">
-      <img src="photos/thomas2.jpg" alt="Actor headshot Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="thomas" data-label="Thomas" data-full="photos/thomas3.jpg">
-      <img src="photos/thomas3.jpg" alt="Actor headshot Los Angeles" loading="lazy" /></div>
-
-    <!-- Tori -->
-    <div class="grid-item" data-session="tori" data-label="Tori" data-full="photos/tori_1.jpg">
-      <img src="photos/tori_1.jpg" alt="Actress headshot Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="tori" data-label="Tori" data-full="photos/tori2.jpg">
-      <img src="photos/tori2.jpg" alt="Actress headshot Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="tori" data-label="Tori" data-full="photos/tori3.jpg">
-      <img src="photos/tori3.jpg" alt="Actress headshot Los Angeles" loading="lazy" /></div>
-
-    <!-- Vanessa -->
-    <div class="grid-item" data-session="vanessa" data-label="Vanessa" data-full="photos/vanessa.jpg">
-      <img src="photos/vanessa.jpg" alt="Actress headshot Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="vanessa" data-label="Vanessa" data-full="photos/vanessa2.jpg">
-      <img src="photos/vanessa2.jpg" alt="Actress headshot Los Angeles" loading="lazy" /></div>
-
-    <!-- Katelyn -->
-    <div class="grid-item" data-session="katelyn" data-label="Katelyn" data-full="photos/katelyn.jpg">
-      <img src="photos/katelyn.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
-
-    <!-- Milena -->
-    <div class="grid-item" data-session="milena" data-label="Milena" data-full="photos/milena.jpg">
-      <img src="photos/milena.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
-
-    <!-- Niso -->
-    <div class="grid-item" data-session="niso" data-label="Niso" data-full="photos/niso.jpg">
-      <img src="photos/niso.jpg" alt="Headshot photographer Los Angeles" loading="lazy" /></div>
-
-    <!-- Sky -->
-    <div class="grid-item" data-session="sky" data-label="Sky" data-full="photos/sky.jpg">
-      <img src="photos/sky.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
-
-    <!-- Actress34 -->
-    <div class="grid-item" data-session="actress34" data-label="Actress Session" data-full="photos/actress34.jpg">
-      <img src="photos/actress34.jpg" alt="Actress headshot Los Angeles" loading="lazy" /></div>
-
-    <!-- Carlos Flores-->
-<div class="grid-item" data-session="carlos" data-label="Carlos Flores" data-full="photos/karloz5.jpg">
-  <img src="photos/karloz5.jpg" alt="Headshot photographer Los Angeles" loading="lazy" /></div>
-<div class="grid-item session-extra" data-session="carlos" data-label="Carlos Flores" data-full="photos/karloz2.jpg">
-  <img src="photos/karloz2.jpg" alt="Headshot photographer Los Angeles" loading="lazy" /></div>
-<div class="grid-item session-extra" data-session="carlos" data-label="Carlos Flores" data-full="photos/karloz3.jpg">
-  <img src="photos/karloz3.jpg" alt="Headshot photographer Los Angeles" loading="lazy" /></div>
-<div class="grid-item session-extra" data-session="carlos" data-label="Carlos Flores" data-full="photos/karloz4.jpg">
-  <img src="photos/karloz4.jpg" alt="Headshot photographer Los Angeles" loading="lazy" /></div>
-
-    <!-- Sharilynn -->
-    <div class="grid-item" data-session="sharilynn" data-label="Sharilynn" data-full="photos/sharilynn_horizontal.jpg">
-      <img src="photos/sharilynn_horizontal.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
+    <!-- ADD MORE SESSIONS BELOW FOLLOWING THE SAME PATTERN -->
 
   </div>
-  
 
+  <!-- SESSION GALLERY OVERLAY -->
   <div class="session-overlay" id="sessionOverlay">
     <div class="session-header">
       <span class="session-title" id="sessionTitle">Session</span>
@@ -234,6 +187,7 @@
     <div class="session-grid" id="sessionGrid"></div>
   </div>
 
+  <!-- LIGHTBOX -->
   <div class="lightbox" id="lightbox">
     <button class="lightbox-close" id="lightboxClose" aria-label="Close">&#10005;</button>
     <button class="lightbox-prev" id="lightboxPrev" aria-label="Previous">&#8592;</button>
@@ -241,6 +195,7 @@
     <button class="lightbox-next" id="lightboxNext" aria-label="Next">&#8594;</button>
   </div>
 
+  <!-- FOOTER -->
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="logo">
