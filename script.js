@@ -143,3 +143,11 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
 });
+
+// Block casual right-click save and drag on photos (Carlos, Aug 16 2026)
+document.addEventListener('contextmenu', function (e) {
+  if (e.target.tagName === 'IMG') e.preventDefault();
+});
+document.addEventListener('dragstart', function (e) {
+  if (e.target.tagName === 'IMG') e.preventDefault();
+});
