@@ -151,3 +151,53 @@ document.addEventListener('contextmenu', function (e) {
 document.addEventListener('dragstart', function (e) {
   if (e.target.tagName === 'IMG') e.preventDefault();
 });
+
+// Phone back button closes photo pop-ups instead of leaving the site (Carlos, Aug 17 2026)
+(function () {
+  var pushed = 0;         // history states we added for open pop-ups
+  var expectPop = 0;      // pops we triggered ourselves, to be ignored
+  var closingFromPop = 0; // pop-up closes caused by the back button
+
+  function watch(el) {
+    if (!el) return;
+    var wasOpen = el.classList.contains('open');
+    new MutationObserver(function () {
+      var isOpen = el.classList.contains('open');
+      if (isOpen === wasOpen) return;
+      wasOpen = isOpen;
+      if (isOpen) {
+        pushed++;
+        history.pushState({ karlozOverlay: true }, '');
+      } else if (pushed > 0) {
+        pushed--;
+        if (closingFromPop > 0) { closingFromPop--; }
+        else { expectPop++; history.back(); }
+      }
+    }).observe(el, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  function init() {
+    watch(document.getElementById('sessionOverlay'));
+    watch(document.getElementById('lightbox'));
+
+    window.addEventListener('popstate', function () {
+      if (expectPop > 0) { expectPop--; return; }
+      var lb = document.getElementById('lightbox');
+      var so = document.getElementById('sessionOverlay');
+      if (lb && lb.classList.contains('open')) {
+        closingFromPop++;
+        lb.classList.remove('open');
+      } else if (so && so.classList.contains('open')) {
+        closingFromPop++;
+        so.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
