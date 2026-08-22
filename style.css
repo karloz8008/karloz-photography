@@ -497,3 +497,18 @@ img {
   -webkit-user-select: none;
   user-select: none;
 }
+
+/* ===== LIGHTBOX HEART (added Aug 22 2026, Carlos's request) ===== */
+.lightbox-heart {
+  position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 10px;
+  min-width: 48px; height: 48px; padding: 0 18px;
+  background: rgba(20,18,18,0.6); border: 1px solid rgba(238,229,218,0.3);
+  color: var(--cream); cursor: pointer; font-size: 16px; font-weight: 300;
+  transition: border-color 0.2s, background 0.2s;
+}
+.lightbox-heart svg { fill: none; stroke: currentColor; stroke-width: 1.6; transition: fill 0.2s, transform 0.2s; }
+.lightbox-heart:hover { border-color: var(--cream); background: var(--cream-10); }
+.lightbox-heart.on { border-color: #e0566b; color: #e0566b; }
+.lightbox-heart.on svg { fill: #e0566b; transform: scale(1.12); }
+.lightbox-heart-count:empty { display: none; }

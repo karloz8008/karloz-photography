@@ -116,10 +116,43 @@ document.addEventListener('DOMContentLoaded', function () {
     document.body.style.overflow = 'hidden';
   }
 
+  // Heart button (Carlos, Aug 22 2026) — one heart per person per photo, counted at /api/heart
+  const lightboxHeart      = document.getElementById('lightboxHeart');
+  const lightboxHeartCount = document.getElementById('lightboxHeartCount');
+  const heartKey = (src) => 'hearted:' + src;
+  function refreshHeart(photo) {
+    if (!lightboxHeart) return;
+    const on = !!localStorage.getItem(heartKey(photo.src));
+    lightboxHeart.classList.toggle('on', on);
+    lightboxHeartCount.textContent = '';
+    fetch('/api/heart?photo=' + encodeURIComponent(photo.src), { cache: 'no-store' })
+      .then(r => r.json())
+      .then(d => { if (currentPhotos[currentIndex] === photo && d.count > 0) lightboxHeartCount.textContent = d.count; })
+      .catch(() => {});
+  }
+  if (lightboxHeart) {
+    lightboxHeart.addEventListener('click', function (e) {
+      e.stopPropagation();
+      const photo = currentPhotos[currentIndex];
+      if (!photo) return;
+      const on = !lightboxHeart.classList.contains('on');
+      lightboxHeart.classList.toggle('on', on);
+      if (on) localStorage.setItem(heartKey(photo.src), '1'); else localStorage.removeItem(heartKey(photo.src));
+      const shown = parseInt(lightboxHeartCount.textContent, 10) || 0;
+      const next  = Math.max(0, shown + (on ? 1 : -1));
+      lightboxHeartCount.textContent = next > 0 ? next : '';
+      fetch('/api/heart', {
+        method: 'POST', keepalive: true,
+        body: JSON.stringify({ photo: photo.src, label: photo.label || '', delta: on ? 1 : -1 })
+      }).catch(() => {});
+    });
+  }
+
   function showLightboxPhoto() {
     const photo = currentPhotos[currentIndex];
     lightboxImg.src = photo.src;
     lightboxImg.alt = photo.alt;
+    refreshHeart(photo);
     if (lightboxPrev) lightboxPrev.style.opacity = currentIndex === 0 ? '0.3' : '1';
     if (lightboxNext) lightboxNext.style.opacity = currentIndex === currentPhotos.length - 1 ? '0.3' : '1';
   }

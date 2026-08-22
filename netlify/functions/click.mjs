@@ -4,7 +4,7 @@
 import { getStore } from "@netlify/blobs";
 
 export default async (req) => {
-  const store = getStore("photo-clicks");
+  const store = getStore({ name: "photo-clicks", consistency: "strong" });
 
   if (req.method === "POST") {
     let body = {};
@@ -17,6 +17,16 @@ export default async (req) => {
     cur.last  = new Date().toISOString();
     await store.setJSON(photo, cur);
     return new Response("ok", { status: 200 });
+  }
+
+  // DELETE /api/click?photo=...  -> removes a counter only if that photo file does not exist on the site (cleanup of junk keys)
+  if (req.method === "DELETE") {
+    const photo = String(new URL(req.url).searchParams.get("photo") || "").replace(/[^a-zA-Z0-9_.\/-]/g, "").slice(0, 120);
+    if (!photo.startsWith("photos/")) return new Response("bad request", { status: 400 });
+    const head = await fetch(new URL("/" + photo, req.url), { method: "HEAD" });
+    if (head.ok) return new Response("refused: real photo", { status: 403 });
+    await store.delete(photo);
+    return new Response("deleted", { status: 200 });
   }
 
   const { blobs } = await store.list();
