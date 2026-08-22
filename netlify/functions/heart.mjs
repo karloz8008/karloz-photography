@@ -27,6 +27,16 @@ export default async (req) => {
     return json({ count: cur.count });
   }
 
+  // DELETE /api/heart?photo=...  -> removes a counter only if that photo file does not exist on the site (cleanup of junk keys)
+  if (req.method === "DELETE") {
+    const photo = clean(new URL(req.url).searchParams.get("photo"));
+    if (!photo.startsWith("photos/")) return new Response("bad request", { status: 400 });
+    const head = await fetch(new URL("/" + photo, req.url), { method: "HEAD" });
+    if (head.ok) return new Response("refused: real photo", { status: 403 });
+    await store.delete(photo);
+    return new Response("deleted", { status: 200 });
+  }
+
   const one = clean(new URL(req.url).searchParams.get("photo"));
   if (one) {
     const v = await store.get(one, { type: "json" });
