@@ -1,0 +1,7 @@
+{
+  "name": "karloz-photography",
+  "private": true,
+  "dependencies": {
+    "@netlify/blobs": "^11.0.1"
+  }
+}

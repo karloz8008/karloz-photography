@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Photo Clicks — Karloz</title>
+  <style>
+    body { margin:0; background:#111; color:#eee5da; font-family: -apple-system, Helvetica, Arial, sans-serif; padding:30px 20px 80px; }
+    h1 { font-size:34px; font-weight:400; margin:0 0 6px; }
+    .sub { font-size:20px; opacity:.6; margin-bottom:30px; }
+    .row { display:flex; align-items:center; gap:24px; padding:16px 0; border-bottom:1px solid rgba(238,229,218,.15); }
+    .rank { width:56px; font-size:30px; opacity:.5; text-align:right; }
+    .row img { width:120px; height:150px; object-fit:cover; border-radius:4px; background:#222; }
+    .name { flex:1; font-size:32px; }
+    .file { font-size:16px; opacity:.45; margin-top:4px; }
+    .count { font-size:56px; font-weight:300; min-width:120px; text-align:right; }
+    .count small { font-size:18px; opacity:.5; margin-left:6px; }
+    .empty { font-size:28px; opacity:.7; padding:40px 0; }
+  </style>
+</head>
+<body>
+  <h1>Photo clicks</h1>
+  <div class="sub" id="sub">Loading…</div>
+  <div id="list"></div>
+  <script>
+    fetch('/api/click', { cache: 'no-store' })
+      .then(r => r.json())
+      .then(rows => {
+        const list = document.getElementById('list');
+        const total = rows.reduce((n, r) => n + r.count, 0);
+        document.getElementById('sub').textContent = total
+          ? total + ' clicks on ' + rows.length + ' photos, most clicked first'
+          : '';
+        if (!rows.length) { list.innerHTML = '<div class="empty">No clicks counted yet. Check back in a few days.</div>'; return; }
+        rows.forEach((r, i) => {
+          const thumb = r.photo.replace(/^photos\//, 'photos/thumbs/');
+          const name  = r.label || r.photo.replace(/^photos\//, '').replace(/\.jpg$/i, '');
+          const div = document.createElement('div');
+          div.className = 'row';
+          div.innerHTML = '<div class="rank">' + (i + 1) + '</div>' +
+            '<img src="' + thumb + '" alt="" onerror="this.src=\'' + r.photo + '\'" />' +
+            '<div><div class="name">' + name + '</div><div class="file">' + r.photo + '</div></div>' +
+            '<div class="count">' + r.count + '<small>' + (r.count === 1 ? 'click' : 'clicks') + '</small></div>';
+          list.appendChild(div);
+        });
+      })
+      .catch(() => { document.getElementById('sub').textContent = 'Could not load the counter.'; });
+  </script>
+</body>
+</html>

@@ -51,12 +51,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const sessionMap = buildSessionMap();
 
+  // Count photo clicks (Carlos, Aug 22 2026) — results at karloz.art/clicks.html
+  function trackClick(src, label) {
+    try {
+      const data = JSON.stringify({ photo: src, label: label || '' });
+      if (navigator.sendBeacon) navigator.sendBeacon('/api/click', data);
+      else fetch('/api/click', { method: 'POST', body: data, keepalive: true });
+    } catch (e) {}
+  }
+
   // Open session gallery
   document.querySelectorAll('.grid-item[data-session]').forEach(item => {
     item.addEventListener('click', function () {
       const session = this.dataset.session;
       const photos  = sessionMap[session] || [];
       const label   = this.dataset.label || session;
+      trackClick(this.dataset.full, label);
 
       sessionTitle.textContent = label;
       sessionGrid.innerHTML = '';
@@ -65,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const div = document.createElement('div');
         div.className = 'session-grid-item';
         div.innerHTML = `<img src="${photo.src}" alt="${photo.alt}" loading="lazy" />`;
-        div.addEventListener('click', () => openLightbox(photos, idx));
+        div.addEventListener('click', () => { trackClick(photo.src, label); openLightbox(photos, idx); });
         sessionGrid.appendChild(div);
       });
 
