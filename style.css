@@ -512,3 +512,116 @@ img {
 .lightbox-heart.on { border-color: #e0566b; color: #e0566b; }
 .lightbox-heart.on svg { fill: #e0566b; transform: scale(1.12); }
 .lightbox-heart-count:empty { display: none; }
+
+/* ===== DIAMOND & GOLD HERO (Carlos Aug 31 2026) — additive only.
+   White diamond copied VERBATIM from diamond-type-samples.html sample 2.
+   Gold copied VERBATIM from karlozgram/endcard/cn-endcard.html (.gold). ===== */
+.cut{
+  position:relative;display:inline-block;isolation:isolate;
+  background-image:
+    repeating-linear-gradient(100deg,
+      rgba(255,255,255,.95) 0 5px,  rgba(255,255,255,.10) 5px 8px,
+      rgba(0,0,0,.88)      8px 14px, rgba(255,255,255,.60) 14px 18px,
+      rgba(0,0,0,.45)     18px 26px),
+    linear-gradient(176deg,#ffffff 0%,#efe7d6 28%,#4a443a 49%,#fffdf8 55%,#c9bda0 78%,#ffffff 100%);
+  background-blend-mode:overlay,normal;
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;
+}
+.cut .glare{
+  position:absolute;inset:0;color:#fff;pointer-events:none;
+  --g:linear-gradient(102deg,transparent 0%,rgba(0,0,0,.35) 35%,#000 50%,rgba(0,0,0,.35) 65%,transparent 100%);
+  -webkit-mask-image:var(--g);mask-image:var(--g);
+  -webkit-mask-size:45% 100%;mask-size:45% 100%;
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  animation:sweep 5.5s linear infinite;
+  text-shadow:0 0 14px rgba(255,255,255,.85),0 0 40px rgba(180,215,255,.5);
+}
+.cut .disp-c,.cut .disp-m{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;opacity:.55}
+.cut .disp-c{color:#5fd9ff;transform:translateX(-.8px)}
+.cut .disp-m{color:#ff86dc;transform:translateX(.8px)}
+@keyframes sweep{0%{-webkit-mask-position:-60% 0;mask-position:-60% 0}
+  100%{-webkit-mask-position:160% 0;mask-position:160% 0}}
+@media (prefers-reduced-motion:reduce){
+  .cut .glare{animation:none;-webkit-mask-position:35% 0;mask-position:35% 0}
+  .spark{animation:none;opacity:.9;transform:scale(.8)}}
+.sparkbox{position:absolute;inset:0;pointer-events:none}
+.spark{position:absolute;width:26px;height:26px;background:#fff;opacity:0;
+  clip-path:polygon(50% 0,55% 45%,100% 50%,55% 55%,50% 100%,45% 55%,0 50%,45% 45%);
+  filter:drop-shadow(0 0 5px rgba(200,230,255,.95));
+  animation:glint 5.5s ease-in-out infinite}
+@keyframes glint{0%,68%,100%{opacity:0;transform:scale(.1) rotate(0)}
+  76%{opacity:1;transform:scale(1) rotate(30deg)}
+  84%{opacity:0;transform:scale(.25) rotate(60deg)}}
+/* gold variant — endcard verbatim */
+.gold{background-image:
+    repeating-linear-gradient(100deg,
+      rgba(255,255,255,.95) 0 5px,  rgba(255,255,255,.10) 5px 8px,
+      rgba(0,0,0,.88)      8px 14px, rgba(255,255,255,.60) 14px 18px,
+      rgba(0,0,0,.45)     18px 26px),
+    linear-gradient(176deg,#f7d98a 0%,#b8892f 28%,#5a4013 49%,#ffe9a8 55%,#9a742e 78%,#f7d98a 100%)}
+.gold{background-blend-mode:soft-light,normal}
+.gold .disp-c{color:#ffd27a;opacity:.35}
+.gold .disp-m{color:#ff9d5c;opacity:.35}
+.gold .glare{color:#ffdf96;text-shadow:0 0 14px rgba(255,215,140,.9),0 0 40px rgba(255,190,100,.55)}
+/* hero fit — keep the site's sizes, take the sample's weight and spacing */
+.hero-title .cut{font-weight:400;letter-spacing:.07em}
+.hero-title em.cut{color:transparent;font-style:italic}
+/* eyebrow: endcard gold tones, smooth clip so tiny letters stay readable */
+.hero-content .eyebrow{
+  background-image:linear-gradient(176deg,#f7d98a 0%,#b8892f 28%,#ffe9a8 55%,#9a742e 78%,#f7d98a 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+/* body text under the title: diamond, finer facets for small type */
+.hero-content .hero-body{
+  background-image:linear-gradient(176deg,#ffffff 0%,#f2ecdf 35%,#d9cfba 55%,#fffdf8 75%,#ffffff 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+/* book button: endcard gold */
+.hero-content .btn-primary{
+  background:linear-gradient(180deg,#f7d98a 0%,#c99a3c 45%,#9a742e 80%,#e3bd62 100%);color:#231c0d}
+.hero-content .btn-primary:hover{
+  background:linear-gradient(180deg,#ffe9a8 0%,#d7ab4d 45%,#a97f34 80%,#f0ca6e 100%)}
+
+/* nav links: diamond letters with the light always sliding left to right (CSS-only) */
+.nav-link{
+  background-image:
+    linear-gradient(102deg,transparent 35%,rgba(255,255,255,.98) 50%,transparent 65%),
+    linear-gradient(176deg,#ffffff 0%,#efe7d6 30%,#b9ad97 50%,#fffdf8 65%,#dcd2bd 85%,#ffffff 100%);
+  background-size:250% 100%,100% 100%;
+  background-repeat:no-repeat;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:navsweep 5.5s linear infinite}
+.nav-link:hover,.nav-link.active{color:transparent}
+@keyframes navsweep{0%{background-position:-150% 0,0 0}100%{background-position:250% 0,0 0}}
+/* gold line under the active link: endcard gold with the same sliding light */
+.nav-link::after{
+  background:
+    linear-gradient(102deg,transparent 35%,#ffe9a8 50%,transparent 65%),
+    linear-gradient(90deg,#9a742e 0%,#f7d98a 30%,#ffe9a8 50%,#b8892f 75%,#f7d98a 100%);
+  background-size:250% 100%,100% 100%;
+  background-repeat:no-repeat;
+  animation:navsweep 5.5s linear infinite}
+@media (prefers-reduced-motion:reduce){
+  .nav-link,.nav-link::after{animation:none;background-position:50% 0,0 0}}
+
+/* page-hero titles (testimonials etc.): same diamond and gold as the main page */
+.page-hero .cut{font-weight:400;letter-spacing:.07em}
+.page-hero h1 em.cut{color:transparent;font-style:italic}
+.page-hero .eyebrow{
+  background-image:linear-gradient(176deg,#f7d98a 0%,#b8892f 28%,#ffe9a8 55%,#9a742e 78%,#f7d98a 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* closing CTA (testimonials): diamond sentence, gold "open doors?", gold button like the main page */
+.testimonials-cta p em.cut{color:transparent;font-style:italic}
+.testimonials-cta .btn-primary{
+  background:linear-gradient(180deg,#f7d98a 0%,#c99a3c 45%,#9a742e 80%,#e3bd62 100%);color:#231c0d}
+.testimonials-cta .btn-primary:hover{
+  background:linear-gradient(180deg,#ffe9a8 0%,#d7ab4d 45%,#a97f34 80%,#f0ca6e 100%)}
+
+/* about page: gold eyebrow and gold booking button in the contact section */
+.contact-section .eyebrow{
+  background-image:linear-gradient(176deg,#f7d98a 0%,#b8892f 28%,#ffe9a8 55%,#9a742e 78%,#f7d98a 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.contact-section .btn-primary{
+  background:linear-gradient(180deg,#f7d98a 0%,#c99a3c 45%,#9a742e 80%,#e3bd62 100%);color:#231c0d}
+.contact-section .btn-primary:hover{
+  background:linear-gradient(180deg,#ffe9a8 0%,#d7ab4d 45%,#a97f34 80%,#f0ca6e 100%)}
