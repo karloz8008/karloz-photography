@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IArtist — free for every actor and model</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap');
+:root{
+  --paper:#F3E6C9; --card:#FBF5E6; --ink:#1E1A17; --muted:#5A473C;
+  --burgundy:#800020; --lantern:#F2C230; --bronze:#8C5B2F; --black:#000;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:'Atkinson Hyperlegible',system-ui,sans-serif;font-size:22px;line-height:1.45}
+body{background-image:radial-gradient(rgba(30,26,23,.10) 1px,transparent 1px);background-size:6px 6px}
+h1,h2,h3{font-family:'Abril Fatface',serif;font-weight:400;margin:0;line-height:.95;letter-spacing:.01em}
+.wrap{max-width:1000px;margin:0 auto;padding:28px 20px 80px}
+
+/* TITLE — the MOULIN ROUGE trick */
+.masthead{position:relative;overflow:hidden;margin:0 -20px 24px;padding:26px 20px 18px;border-top:6px solid var(--black);border-bottom:6px solid var(--black)}
+.masthead .kicker{font-weight:700;text-transform:uppercase;letter-spacing:.18em;font-size:.8rem;color:var(--burgundy);margin-bottom:8px}
+.title{position:relative;display:inline-block;margin-left:-.06em;padding:0 .3em .1em 0}
+.title span{position:absolute;left:0;top:.05em;font-family:'Abril Fatface',serif;text-transform:uppercase;
+  font-size:clamp(3.2rem,12.5vw,8.6rem);line-height:.9;white-space:nowrap;color:var(--ink)}
+.title span.e1{color:var(--burgundy);opacity:.55;transform:translate(.06em,.10em)}
+.title span.base{position:relative;display:inline-block;left:0;top:0}
+.title span.e2{color:var(--burgundy);opacity:.28;transform:translate(.12em,.20em)}
+.title small{display:block;font-family:'Atkinson Hyperlegible',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.12em;font-size:.29em;white-space:nowrap;color:var(--ink);margin-top:.15em}
+
+.hero{margin:0 0 30px;border:4px solid var(--black);box-shadow:6px 6px 0 var(--black);background:#000;line-height:0}
+.hero img{width:100%;height:auto;max-height:min(82vh,940px);object-fit:cover;object-position:50% 18%;display:block}
+.hero figcaption{line-height:1.3;background:var(--card);border-top:4px solid var(--black);font-family:'Atkinson Hyperlegible',sans-serif;font-size:1rem;color:var(--muted);padding:10px 16px;text-align:right}
+/* PANELS */
+.panel{background:var(--card);border:4px solid var(--black);box-shadow:6px 6px 0 var(--black);padding:26px 24px;margin:0 0 30px;position:relative}
+.panel.stage::before{content:"";position:absolute;left:-4px;right:-4px;top:-4px;height:18px;background:var(--lantern);
+  clip-path:polygon(0 0,100% 0,100% 55%,92% 100%,84% 55%,76% 100%,68% 55%,60% 100%,52% 55%,44% 100%,36% 55%,28% 100%,20% 55%,12% 100%,4% 55%,0 100%)}
+.panel.stage{padding-top:40px}
+.lead{font-size:clamp(1.35rem,3.4vw,2rem);font-weight:700;line-height:1.25;margin:0 0 18px}
+p{margin:0 0 16px}
+.big{font-size:1.15em}
+.burg{color:var(--burgundy)}
+.bronze{color:var(--bronze)}
+
+/* CTA BUTTONS */
+.btn{display:block;width:100%;text-align:center;text-decoration:none;color:#fff;background:var(--burgundy);
+  font-family:'Abril Fatface',serif;font-size:clamp(1.5rem,4.5vw,2.4rem);padding:22px 18px;border:4px solid var(--black);
+  box-shadow:6px 6px 0 var(--black);margin:8px 0 18px;cursor:pointer;text-transform:uppercase;letter-spacing:.03em}
+.btn.black{background:var(--black)}
+.btn:active,button.btn:active{transform:translate(6px,6px);box-shadow:none}
+.btn:focus-visible{outline:6px solid var(--lantern);outline-offset:4px}
+
+/* RULES LIST as stacked stamps */
+.rule{display:flex;gap:16px;align-items:flex-start;border:4px solid var(--black);background:#fff;padding:14px 16px;margin:0 0 14px;font-weight:700;font-size:1.05em}
+.rule b{font-family:'Abril Fatface',serif;font-weight:400;font-size:1.7em;line-height:1;color:var(--burgundy);min-width:1.2em}
+.rule.no b{color:var(--black)}
+
+/* FEATURE GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin-top:6px}
+.tile{border:4px solid var(--black);background:#fff;box-shadow:6px 6px 0 var(--black);padding:18px}
+.tile h3{font-size:1.5rem;margin-bottom:8px}
+.tile p{margin:0;font-size:.92em;color:var(--muted)}
+.tile.a{border-color:var(--burgundy)}
+.tile.p{border-color:var(--bronze)}
+.tile.p h3{color:var(--bronze)}
+
+/* PROMPT BLOCKS */
+pre{white-space:pre-wrap;word-break:break-word;font-family:'Atkinson Hyperlegible',monospace;font-size:.85em;line-height:1.5;
+  background:#fff;border:4px solid var(--black);padding:16px;margin:0 0 10px}
+.copy{font:inherit;font-weight:700;font-size:1em;background:var(--lantern);color:var(--ink);border:4px solid var(--black);
+  box-shadow:6px 6px 0 var(--black);padding:14px 20px;cursor:pointer;margin:0 0 26px;width:100%}
+.copy:active{transform:translate(6px,6px);box-shadow:none}
+.sponsors{background:var(--lantern);border:4px solid var(--black);box-shadow:6px 6px 0 var(--black);padding:16px 18px;margin:8px 0 4px;font-weight:700;font-size:1.05em;text-align:center}
+.sponsors a{color:var(--ink)}
+.sponsors .tag{margin-bottom:8px}
+.sidead{font-size:.72em;line-height:1.4;color:var(--muted);border:2px dashed var(--black);padding:12px 14px;margin:0 0 4px;max-width:520px}
+.sidead a{color:var(--burgundy);font-weight:700}
+.sidead .tag{font-size:.6rem;margin-bottom:6px}
+.tag{display:inline-block;background:var(--black);color:#fff;font-weight:700;text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;padding:6px 10px;margin:0 0 10px}
+
+footer{border-top:6px solid var(--black);margin-top:40px;padding-top:22px;font-size:.85em;color:var(--muted)}
+footer a{color:var(--burgundy);font-weight:700}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(120px);background:var(--black);color:#fff;
+  font-weight:700;padding:16px 26px;border:4px solid var(--lantern);font-size:1.1em;transition:transform .25s}
+.toast.on{transform:translateX(-50%)}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+@media print{.copy,.toast,#prompts{display:none}body{background:#fff}.panel,.btn,.tile{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <div class="kicker">From Hollywood, California. The only app of its kind. Free.</div>
+  <div class="title" aria-label="IArtist">
+    <span class="e2" aria-hidden="true">IArtist</span>
+    <span class="e1" aria-hidden="true">IArtist</span>
+    <span class="base">IArtist<small>For actors and models</small></span>
+  </div>
+</header>
+
+<figure class="hero"><img src="hero3.jpg" alt="Sophie Kirkegaard"><figcaption>Model: Sophie Kirkegaard</figcaption></figure>
+
+<!-- THE AD -->
+<section class="panel stage">
+  <p class="lead">You are an artist. Your job is to create. Let IArtist remember the rest.</p>
+  <p class="big">A free app for actors and models. Every audition, every callback, every booking, every dollar, and every casting director, producer and photographer you ever worked with, kept in one place you can open years from now.</p>
+  <p class="big">It is your accountant and your memory. It lives in your own browser, on your phone, tablet, laptop or desktop, and you can move your data between devices with one backup file. Nobody sees it but you. No account, no subscription, no catch.</p>
+  <a class="btn" href="IArtist.html" download="IArtist.html" id="get-app">Be free. Be yourself, the artist.</a>
+</section>
+
+<footer>
+  App created by a working actor and photographer. <a href="https://karloz.art" target="_blank" rel="noopener">karloz.art</a> and <a href="https://getvirtualreader.com" target="_blank" rel="noopener">GetVirtualReader.com</a>
+  &nbsp; Copyright &copy; 2026 Carlos Flores. All rights reserved.
+</footer>
+</div>
+<div class="toast" id="toast">Copied</div>
+<script>
+document.querySelectorAll('.copy').forEach(function(b){
+  b.addEventListener('click',function(){
+    var t=document.getElementById(b.dataset.for).textContent;
+    var done=function(){var s=document.getElementById('toast');s.classList.add('on');setTimeout(function(){s.classList.remove('on')},1400)};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,function(){fallback(t);done()})}
+    else{fallback(t);done()}
+  });
+});
+function fallback(t){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+</script>
+</body>
+</html>

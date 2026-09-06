@@ -1,0 +1,2753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IArtist</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;700&display=swap');
+
+  :root {
+    /* Carlos's palette — burgundy and antique gold */
+    --burg: #800020;    /* the brand red — primary action */
+    --plum: #2D0515;    /* near-black burgundy — ink and second action */
+    --gold: #EAC271;    /* antique gold — always with dark ink on top */
+    --rose: #BD7B82;    /* dusty rose — fills and tints only, never white text */
+    /* supporting colours for the charts, all safe under white numerals */
+    --mauve: #6B4A6E;
+    --steel: #3F5E75;
+    --bronze: #8C5B2F;
+    --forest: #2F6B5E;
+    --brass: #7A5C1E;
+    --wine: #9E4B5B;
+    --slate: #2D0515;
+    --grey: #5A5A5A;
+    --silver: #E6EBE6;
+    /* app surfaces */
+    --bg: #E6EBE6;
+    --card: #FFFFFF;
+    --ink: #2D0515;
+    --muted: #5A4448;
+    --line: #7A6B6D;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { font-size: 18px; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Atkinson Hyperlegible', 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 22px 18px 90px;
+    max-width: 980px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+
+  /* ===== HEADER ===== */
+  header { margin-bottom: 18px; }
+  header h1 { font-family: 'Abril Fatface', 'DM Serif Display', serif; font-size: 2.1rem; color: var(--burg); letter-spacing: -0.01em; }
+  .subtitle { color: var(--muted); font-size: 1rem; }
+
+  /* ===== THE TWO BIG BUTTONS ===== */
+  .big-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px 0 22px; }
+  @media (max-width: 760px) { .big-btns { grid-template-columns: 1fr; } }
+  .btn-big {
+    border: none; border-radius: 16px; cursor: pointer;
+    font-family: 'Atkinson Hyperlegible', 'DM Sans', sans-serif; font-size: 1.3rem; font-weight: 700;
+    padding: 22px 14px; transition: transform 0.1s, filter 0.15s; color: #fff;
+  }
+  .btn-big:hover { transform: translateY(-1px); filter: brightness(1.1); }
+  .btn-did { background: var(--burg); }
+  .btn-booked { background: var(--gold); color: var(--plum); }
+
+  /* ===== FACE TABS ===== */
+  .faces { display: flex; gap: 10px; margin-bottom: 22px; flex-wrap: wrap; }
+  @media (max-width: 700px) { .face-tab { flex: 1 1 100%; } }
+  .face-tab {
+    flex: 1; background: var(--card); border: 2px solid var(--line); color: var(--muted);
+    border-radius: 14px; font-family: 'Atkinson Hyperlegible', 'DM Sans', sans-serif; font-size: 1.15rem; font-weight: 700;
+    padding: 14px; cursor: pointer; transition: all 0.15s; text-align: center;
+  }
+  .face-tab.active { background: var(--slate); color: #fff; border-color: var(--slate); }
+
+  /* ===== GRAPHS ===== */
+  .mode-row { display: flex; gap: 10px; margin-bottom: 20px; }
+  .mode-chip {
+    background: var(--card); border: 2px solid var(--line); color: var(--muted);
+    border-radius: 24px; font-family: 'Atkinson Hyperlegible', 'DM Sans', sans-serif; font-size: 1rem; font-weight: 700;
+    padding: 10px 22px; cursor: pointer;
+  }
+  .mode-chip.active { background: var(--burg); color: #fff; border-color: var(--burg); }
+
+  .chart-box {
+    background: var(--card); border: 2px solid var(--line); border-radius: 16px;
+    padding: 20px; margin-bottom: 20px;
+  }
+  .chart-box h3 { font-family: 'Abril Fatface', 'DM Serif Display', serif; font-size: 1.35rem; margin-bottom: 4px; }
+  .chart-total { font-size: 1rem; color: var(--muted); margin-bottom: 10px; }
+  .chart-total b { font-size: 1.1rem; }
+  .chart-scroll { width: 100%; overflow-x: auto; }
+  .chart-note { font-size: 0.95rem; color: var(--muted); margin-top: 8px; }
+  .chart-legend { display: flex; gap: 22px; margin-top: 10px; font-size: 1.05rem; flex-wrap: wrap; }
+  .legend-dot { display: inline-block; width: 16px; height: 16px; border-radius: 50%; margin-right: 8px; vertical-align: -2px; }
+
+  /* ===== DATABASE ===== */
+  .db-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 620px) { .db-grid { grid-template-columns: 1fr; } }
+  .db-btn {
+    border: 3px solid; border-radius: 16px; background: var(--card); cursor: pointer;
+    font-family: 'Atkinson Hyperlegible', 'DM Sans', sans-serif; font-size: 1.2rem; font-weight: 700;
+    padding: 22px 14px; text-align: center; transition: transform 0.1s;
+  }
+  .db-btn:hover { transform: translateY(-1px); }
+  .db-btn .db-count { display: block; font-size: 0.95rem; font-weight: 500; color: var(--muted); margin-top: 4px; }
+
+  .btn-back {
+    background: var(--card); border: 2px solid var(--line); color: var(--ink);
+    border-radius: 12px; font-family: 'Atkinson Hyperlegible', 'DM Sans', sans-serif; font-size: 1.05rem; font-weight: 700;
+    padding: 12px 22px; cursor: pointer; margin-bottom: 16px;
+  }
+  .btn-back:hover { border-color: var(--slate); }
+
+  .db-head { font-family: 'Abril Fatface', 'DM Serif Display', serif; font-size: 1.6rem; margin-bottom: 4px; }
+  .db-sub { color: var(--muted); font-size: 1rem; margin-bottom: 16px; }
+
+  .search-box {
+    width: 100%; background: var(--card); border: 2px solid var(--line);
+    border-radius: 12px; color: var(--ink); font-family: 'Atkinson Hyperlegible', 'DM Sans', sans-serif; font-size: 1.05rem;
+    padding: 12px 14px; outline: none; margin-bottom: 14px;
+  }
+  .search-box:focus { border-color: var(--slate); }
+  :focus-visible { outline: 4px solid var(--burg); outline-offset: 2px; }
+
+  .row-card {
+    background: var(--card); border: 2px solid var(--line); border-radius: 14px;
+    padding: 14px 16px; margin-bottom: 12px; cursor: pointer; transition: border-color 0.15s;
+    display: flex; gap: 14px; align-items: center;
+  }
+  .row-card:hover { border-color: var(--slate); }
+  .year-bar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+    margin: 0 0 18px;
+  }
+  .year-bar .year-label { font-weight: 700; margin-right: 2px; }
+  .year-chip {
+    font: inherit; font-weight: 700; cursor: pointer;
+    background: var(--card); color: var(--ink);
+    border: 2px solid var(--line); border-radius: 10px; padding: 10px 18px;
+  }
+  .year-chip.active { background: var(--burg); border-color: var(--burg); color: #fff; }
+  .year-note { flex-basis: 100%; font-size: 1rem; color: var(--muted); }
+  .chart-drill { margin-top: 14px; }
+  .chart-drill-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    font-weight: 700; color: var(--plum); margin-bottom: 10px;
+  }
+  .chart-hint { font-size: 1rem; color: var(--muted); margin-top: 6px; }
+  .row-date {
+    min-width: 70px; text-align: center; background: var(--bg); border-radius: 10px; padding: 7px 5px;
+  }
+  .row-date .d-day { font-family: 'Abril Fatface', 'DM Serif Display', serif; font-size: 1.5rem; line-height: 1.1; }
+  .row-date .d-mon { font-size: 0.95rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .row-main { flex: 1; min-width: 0; }
+  .row-title { font-family: 'Abril Fatface', 'DM Serif Display', serif; font-size: 1.25rem; overflow-wrap: anywhere; }
+  .row-sub { font-size: 0.95rem; color: var(--muted); overflow-wrap: anywhere; }
+  .row-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+  .chip { border-radius: 20px; font-size: 0.85rem; font-weight: 700; padding: 5px 13px; white-space: nowrap; }
+  .st-auditioned { background: var(--bg); color: var(--muted); border: 1.5px solid var(--line); }
+  .st-callback { background: var(--bronze); color: #fff; }
+  .st-booked { background: var(--burg); color: #fff; }
+  .chip-money { background: var(--slate); color: #fff; }
+
+  .empty-state {
+    text-align: center; padding: 44px 20px; color: var(--muted); font-size: 1.1rem;
+    border: 2px dashed var(--line); border-radius: 14px; line-height: 1.7; background: var(--card);
+  }
+  .empty-state b { color: var(--ink); }
+
+  /* ===== CASTING DIRECTORS ===== */
+  .cd-card {
+    background: var(--card); border: 2px solid var(--line); border-radius: 14px;
+    padding: 18px; margin-bottom: 14px;
+  }
+  .cd-name { font-family: 'Abril Fatface', 'DM Serif Display', serif; font-size: 1.35rem; }
+  .cd-last { font-size: 0.9rem; color: var(--muted); }
+  .cd-top { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+  .cd-stats { display: flex; gap: 18px; flex-wrap: wrap; margin: 10px 0; }
+  .cd-stat { font-size: 0.98rem; color: var(--muted); }
+  .cd-stat b { color: var(--burg); font-size: 1.1rem; }
+  .cd-stat.booked b { color: var(--slate); }
+  .cd-field { margin-top: 8px; }
+  .cd-field label { font-size: 1rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+  .cd-input {
+    width: 100%; background: var(--bg); border: 2px solid var(--line); border-radius: 10px;
+    color: var(--ink); font-family: 'Atkinson Hyperlegible', 'DM Sans', sans-serif; font-size: 1rem; padding: 10px 12px; margin-top: 4px;
+  }
+  textarea.cd-input { min-height: 56px; resize: vertical; }
+
+  /* ===== YEAR AT A GLANCE ===== */
+  .year-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+  .summary-card {
+    background: var(--card); border: 2px solid var(--line); border-radius: 12px;
+    padding: 16px 20px; margin-bottom: 10px;
+    display: flex; justify-content: space-between; align-items: center; font-size: 1.15rem;
+  }
+  .summary-card b { font-size: 1.35rem; }
+  .summary-card.ent { border-color: var(--burg); }
+
+  /* ===== MODALS ===== */
+  .overlay {
+    display: none; position: fixed; inset: 0; background: rgba(38, 49, 59, 0.75);
+    z-index: 100; overflow-y: auto; padding: 20px 12px 60px;
+  }
+  .overlay.open { display: block; }
+  .modal {
+    background: var(--bg); border: 2px solid var(--line); border-radius: 18px;
+    max-width: 720px; margin: 0 auto; padding: 24px 22px 28px;
+  }
+  .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .modal-head h2 { font-family: 'Abril Fatface', 'DM Serif Display', serif; font-size: 1.55rem; }
+  .btn-close {
+    background: var(--card); border: 2px solid var(--line); color: var(--ink); border-radius: 10px;
+    font-size: 1.05rem; padding: 8px 16px; cursor: pointer; font-family: 'Atkinson Hyperlegible', 'DM Sans', sans-serif; font-weight: 700;
+  }
+  .btn-close:hover { border-color: var(--burg); color: var(--burg); }
+
+  .doors { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 560px) { .doors { grid-template-columns: 1fr; } }
+  .door {
+    border: 3px solid; border-radius: 16px; background: var(--card); cursor: pointer;
+    font-family: 'Atkinson Hyperlegible', 'DM Sans', sans-serif; font-size: 1.25rem; font-weight: 700;
+    padding: 26px 10px; text-align: center; transition: transform 0.1s;
+  }
+  .door:hover { transform: translateY(-2px); }
+
+  .form-section {
+    background: var(--card); border: 2px solid var(--line); border-radius: 14px;
+    padding: 18px; margin-bottom: 16px;
+  }
+  .form-section h3 { font-family: 'Abril Fatface', 'DM Serif Display', serif; font-size: 1.15rem; color: var(--burg); margin-bottom: 14px; }
+  .form-grid { display: flex; flex-wrap: wrap; gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 160px; }
+  .field.full { flex-basis: 100%; }
+  .pair { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 14px; }
+  .pair > .field { flex: 1; min-width: 200px; }
+  label { font-size: 1rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+  .hint { font-size: 1rem; color: var(--muted); margin-top: 4px; }
+
+  input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], textarea {
+    background: #fff; border: 2px solid var(--line); border-radius: 10px;
+    color: var(--ink); font-family: 'Atkinson Hyperlegible', 'DM Sans', sans-serif; font-size: 1.05rem;
+    padding: 12px 14px; outline: none; width: 100%;
+  }
+  input:focus, textarea:focus { border-color: var(--slate); }
+  textarea { resize: vertical; min-height: 70px; line-height: 1.5; }
+
+  .chip-select { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pick {
+    background: #fff; border: 2px solid var(--line); color: var(--muted);
+    border-radius: 20px; font-family: 'Atkinson Hyperlegible', 'DM Sans', sans-serif; font-size: 0.98rem; font-weight: 500;
+    padding: 9px 16px; cursor: pointer; transition: all 0.12s;
+  }
+  .pick:hover { color: var(--ink); }
+  .pick.on { background: var(--slate); color: #fff; border-color: var(--slate); font-weight: 700; }
+
+  .modal-actions { display: flex; gap: 12px; margin-top: 6px; flex-wrap: wrap; }
+  .btn-save {
+    flex: 1; background: var(--burg); color: #fff; border: none; border-radius: 12px;
+    font-family: 'Atkinson Hyperlegible', 'DM Sans', sans-serif; font-size: 1.15rem; font-weight: 700; padding: 15px; cursor: pointer;
+  }
+  .btn-save:hover { filter: brightness(1.15); }
+  .btn-del {
+    background: transparent; border: 2px solid var(--burg); color: var(--burg); border-radius: 12px;
+    font-family: 'Atkinson Hyperlegible', 'DM Sans', sans-serif; font-size: 1rem; padding: 15px 20px; cursor: pointer;
+  }
+  .btn-del:hover { background: var(--burg); color: #fff; }
+  .btn-small {
+    background: var(--card); border: 2px solid var(--line); color: var(--ink); border-radius: 10px;
+    font-family: 'Atkinson Hyperlegible', 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 700; padding: 10px 16px; cursor: pointer;
+  }
+  .btn-small:hover { border-color: var(--slate); }
+
+  .booking-box {
+    background: #fff; border: 2px solid var(--burg); border-radius: 14px;
+    padding: 18px; margin-bottom: 16px;
+  }
+  .booking-box h3 { font-family: 'Abril Fatface', 'DM Serif Display', serif; font-size: 1.15rem; color: var(--burg); margin-bottom: 14px; }
+
+  .export-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
+
+  /* ===== BACKUP ===== */
+  .backup-box { background: var(--card); border: 2px solid var(--line); border-radius: 16px; padding: 18px; margin-top: 26px; }
+  .backup-box h3 { font-family: 'Abril Fatface', 'DM Serif Display', serif; font-size: 1.35rem; color: var(--burg); margin-bottom: 8px; }
+  .backup-box p { color: var(--muted); margin-bottom: 14px; }
+  .backup-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-backup { background: var(--slate); color: #fff; border: none; border-radius: 12px;
+    font-family: 'Atkinson Hyperlegible', 'DM Sans', sans-serif; font-size: 1.05rem; font-weight: 700; padding: 14px 24px; cursor: pointer; }
+  .btn-backup:hover { filter: brightness(1.1); }
+
+  /* ===== DIARY ===== */
+  .diary-write { background: var(--card); border: 2px solid var(--line); border-radius: 16px; padding: 18px; margin-bottom: 20px; }
+  .diary-write h3 { font-family: 'Abril Fatface', 'DM Serif Display', serif; font-size: 1.4rem; color: var(--burg); margin-bottom: 10px; }
+  .diary-daterow { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+  .diary-daterow input[type="date"] { width: auto; }
+  .diary-when { color: var(--muted); font-weight: 700; }
+  #diary-text { min-height: 240px; font-size: 1.1rem; }
+  .diary-actions { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+  .btn-save-diary { background: var(--burg); color: #fff; border: none; border-radius: 12px;
+    font-family: 'Atkinson Hyperlegible', 'DM Sans', sans-serif; font-size: 1.1rem; font-weight: 700; padding: 14px 28px; cursor: pointer; }
+  .btn-save-diary:hover { filter: brightness(1.1); }
+
+  .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .cal-title { font-family: 'Abril Fatface', 'DM Serif Display', serif; font-size: 1.45rem; color: var(--slate); }
+  .cal-nav { background: var(--card); border: 2px solid var(--line); color: var(--ink); border-radius: 10px;
+    font-size: 1.4rem; font-weight: 700; line-height: 1; padding: 6px 18px; cursor: pointer; }
+  .cal-nav:hover { border-color: var(--slate); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal-dow { text-align: center; font-size: 1rem; font-weight: 700; color: var(--muted); letter-spacing: 0.05em; padding-bottom: 4px; }
+  .cal-day { background: var(--card); border: 2px solid var(--line); border-radius: 10px; color: var(--ink);
+    font-family: 'Atkinson Hyperlegible', 'DM Sans', sans-serif; font-size: 1rem; font-weight: 700; padding: 14px 0; cursor: pointer;
+    min-height: 52px; }
+  .cal-day:hover { border-color: var(--slate); }
+  .cal-day.has { background: var(--burg); border-color: var(--burg); color: #fff; }
+  .cal-day.today { border-color: var(--slate); border-width: 3px; }
+  .cal-day.sel { outline: 3px solid var(--slate); outline-offset: 2px; }
+  .diary-card { background: var(--card); border: 2px solid var(--line); border-radius: 14px;
+    padding: 16px 18px; margin-bottom: 12px; cursor: pointer; }
+  .diary-card:hover { border-color: var(--slate); }
+  .diary-card .dc-date { font-weight: 700; color: var(--burg); margin-bottom: 6px; }
+  .diary-card .dc-text { color: var(--ink); white-space: pre-wrap; }
+  .diary-card mark { background: #F3D9A4; color: var(--ink); border-radius: 3px; padding: 0 2px; }
+  .diary-note { color: var(--muted); margin: 18px 0; }
+  .diary-sec-title { font-family: 'Abril Fatface', 'DM Serif Display', serif; font-size: 1.3rem; color: var(--slate); margin: 24px 0 12px; }
+
+  .doc-upload { margin-top: 10px; }
+  .btn-upload {
+    background: var(--slate); color: #fff; border: none; border-radius: 10px;
+    font-family: 'Atkinson Hyperlegible', 'DM Sans', sans-serif; font-size: 1rem; font-weight: 700; padding: 12px 22px; cursor: pointer;
+  }
+  .btn-upload:hover { filter: brightness(1.1); }
+
+  .legend { display: flex; gap: 20px; flex-wrap: wrap; margin: 10px 0 4px; }
+  .legend span { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--ink); }
+  .legend i { width: 18px; height: 18px; border-radius: 50%; display: inline-block; }
+
+  .sponsor {
+    display: block; text-align: center; background: var(--gold); color: var(--plum);
+    border: 2px solid var(--plum); border-radius: 12px; text-decoration: none;
+    font-size: 1.1rem; font-weight: 700; padding: 14px 16px; margin-bottom: 18px;
+  }
+  .sponsor:hover { filter: brightness(1.05); }
+  .sponsor b { font-family: 'Abril Fatface', 'DM Serif Display', serif; font-size: 1.25rem; }
+  .sponsor.bottom { margin: 0 auto 20px; max-width: 520px; }
+
+  .signature {
+    margin: 40px auto 0; max-width: 980px; text-align: center;
+    border-top: 2px solid var(--line); padding: 24px 18px 10px; color: var(--ink);
+  }
+  .signature .made { font-family: 'Abril Fatface', 'DM Serif Display', serif; font-size: 1.25rem; color: var(--burg); }
+  .signature .site {
+    display: inline-block; margin-top: 8px; font-size: 1.15rem; font-weight: 700;
+    color: var(--slate); text-decoration: none; border-bottom: 2px solid var(--slate);
+  }
+  .signature .legal { margin-top: 14px; font-size: 1rem; color: var(--muted); line-height: 1.5; }
+  .signature .lawhead { margin-top: 18px; font-size: 0.75rem; font-weight: 700; color: var(--ink); }
+  .signature .laws { margin-top: 8px; font-size: 0.71rem; color: var(--muted); line-height: 1.8; }
+  .signature .laws a { color: var(--slate); font-weight: 700; }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--slate); color: #fff; font-size: 1.05rem; font-weight: 700;
+    padding: 14px 26px; border-radius: 12px; z-index: 200; display: none;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+  }
+  /* =====================================================================
+     THE LAUTREC LOOK  (chosen by Carlos, Sep 4 2026)
+     Flat ink planes on cream lithograph paper, thick black contours,
+     hard offset shadows, a lantern-yellow stage-light band, the title
+     cropped hard at the left edge and repeated in a fading diagonal stack.
+     Burgundy stays the brand.
+     ===================================================================== */
+  :root {
+    --bg: #F3E6C9; --card: #FBF5E6; --ink: #1E1A17; --muted: #5A473C; --line: #1E1A17;
+    --slate: #1E1A17; --lantern: #F2C230; --paper: #F3E6C9;
+  }
+  body {
+    background-color: var(--paper);
+    background-image: repeating-radial-gradient(circle, rgba(229,213,174,.6) 0 1px, transparent 1px 6px);
+    overflow-x: hidden;
+  }
+  @keyframes ltIn { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  /* --- title: cropped at the edge, printed three times --- */
+  header { position: relative; isolation: isolate; overflow: hidden; margin: 0 -18px 18px; padding: 4px 0 6px 18px; }
+  header h1 {
+    font-family: 'Abril Fatface', serif; font-weight: 400; font-size: clamp(2.1rem, 7.4vw, 3.4rem); line-height: 1;
+    text-transform: uppercase; letter-spacing: 0; margin-left: -22px; position: relative; white-space: nowrap;
+  }
+  header h1::after { content: 'IARTIST'; position: absolute; left: 26px; top: 30px; color: rgba(128,0,32,.22); z-index: -1; }
+  header h1::before { content: 'IARTIST'; position: absolute; left: 52px; top: 60px; color: rgba(128,0,32,.1); z-index: -1; }
+  .subtitle { position: relative; z-index: 2; display: inline-block; margin-top: 10px; padding: 4px 12px 5px; font-weight: 700; background: var(--paper); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+
+  /* --- sponsor strip: small, lantern yellow, inked --- */
+  .sponsor { background: var(--lantern); color: var(--ink); border: 3px solid var(--ink); border-radius: 0;
+    box-shadow: 4px 4px 0 var(--ink); font-size: 0.95rem; padding: 8px 14px; margin-bottom: 20px; }
+  .sponsor b { font-family: 'Abril Fatface', serif; font-size: 1.05rem; font-weight: 400; }
+
+  /* --- the three big buttons --- */
+  .btn-big {
+    border: 4px solid var(--ink); border-radius: 0; box-shadow: 6px 6px 0 var(--ink);
+    font-family: 'Abril Fatface', serif; font-weight: 400; font-size: 1.55rem; letter-spacing: 0.01em;
+    padding: 26px 16px; transition: transform .09s, box-shadow .09s;
+  }
+  .btn-big:hover { transform: none; filter: none; }
+  .btn-big:active { transform: translate(6px, 6px); box-shadow: 0 0 0 var(--ink); }
+  .btn-booked { background: var(--lantern); color: var(--ink); }
+  .big-btns { gap: 18px; margin: 18px 4px 26px 0; }
+
+  /* --- face tabs --- */
+  .faces { gap: 14px; margin: 0 4px 24px 0; }
+  .face-tab { border: 4px solid var(--ink); border-radius: 0; box-shadow: 6px 6px 0 var(--ink); color: var(--ink);
+    background: var(--card); font-size: 1.15rem; transition: transform .09s, box-shadow .09s; }
+  .face-tab:active { transform: translate(6px, 6px); box-shadow: 0 0 0 var(--ink); }
+  .face-tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .mode-chip { border: 3px solid var(--ink); border-radius: 0; color: var(--ink); box-shadow: 4px 4px 0 var(--ink); }
+  .mode-chip.active { background: var(--burg); color: #fff; border-color: var(--ink); }
+  .mode-row { margin: 0 4px 22px 0; }
+
+  /* --- every panel is a flat inked plane with a hard shadow --- */
+  .year-chip,
+  .chart-box, .db-btn, .row-card, .cd-card, .diary-write, .backup-box, .form-section,
+  .summary-card, .empty-state, .booking-box, .diary-card, .modal, .btn-back, .search-box {
+    border: 4px solid var(--ink); border-radius: 0; box-shadow: 6px 6px 0 var(--ink);
+  }
+  .chart-box, .cd-card, .diary-write, .backup-box, .form-section, .booking-box, .db-btn, .row-card, .diary-card, .summary-card {
+    margin-right: 6px; margin-bottom: 22px;
+  }
+  .row-card:hover, .diary-card:hover, .cd-card:hover { border-color: var(--ink); }
+  .db-btn:hover { transform: none; }
+  .db-btn:active, .row-card:active, .diary-card:active { transform: translate(6px, 6px); box-shadow: 0 0 0 var(--ink); }
+  .db-grid { gap: 18px; }
+  .row-date { background: var(--lantern); border: 3px solid var(--ink); border-radius: 0; }
+  .row-date .d-mon { color: var(--ink); }
+
+  /* --- stage-light band along the top of each graph --- */
+  .chart-box { padding-top: 0; overflow: visible; }
+  .chart-box::before {
+    content: ''; display: block; height: 16px; margin: 0 -20px 14px; background: var(--lantern);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 90% 55%, 80% 100%, 70% 55%, 60% 100%, 50% 55%, 40% 100%, 30% 55%, 20% 100%, 10% 55%, 0 100%);
+  }
+  .chart-box h3 { font-size: 1.5rem; font-weight: 400; }
+
+  /* --- the cards slide on like prints pulled off the stone --- */
+  .chart-box, .db-btn, .row-card, .cd-card, .diary-card, .summary-card { animation: ltIn .24s ease-out both; }
+  .chart-box:nth-child(2), .db-btn:nth-child(2), .row-card:nth-child(2) { animation-delay: .05s; }
+  .chart-box:nth-child(3), .db-btn:nth-child(3), .row-card:nth-child(3) { animation-delay: .1s; }
+  .chart-box:nth-child(4), .db-btn:nth-child(4), .row-card:nth-child(4) { animation-delay: .15s; }
+  .chart-box:nth-child(n+5), .db-btn:nth-child(n+5), .row-card:nth-child(n+5) { animation-delay: .2s; }
+  @media (prefers-reduced-motion: reduce) { .chart-box, .db-btn, .row-card, .cd-card, .diary-card, .summary-card { animation: none; } }
+
+  /* --- chips, pills, small buttons --- */
+  .chip { border-radius: 0; border: 2px solid var(--ink); }
+  .st-auditioned { background: var(--card); color: var(--ink); }
+  .st-callback { background: var(--bronze); }
+  .chip-money { background: var(--ink); }
+  .pick { border: 3px solid var(--ink); border-radius: 0; color: var(--ink); background: var(--card); }
+  .pick.on { background: var(--ink); color: var(--lantern); border-color: var(--ink); }
+  .btn-close, .btn-small, .btn-backup, .btn-upload, .cal-nav, .btn-del, .btn-save, .btn-save-diary {
+    border: 3px solid var(--ink); border-radius: 0; box-shadow: 4px 4px 0 var(--ink); transition: transform .09s, box-shadow .09s;
+  }
+  .btn-close:active, .btn-small:active, .btn-backup:active, .btn-upload:active, .cal-nav:active, .btn-del:active, .btn-save:active, .btn-save-diary:active, .btn-back:active {
+    transform: translate(4px, 4px); box-shadow: 0 0 0 var(--ink);
+  }
+  .btn-close:hover, .btn-small:hover, .cal-nav:hover, .btn-back:hover { border-color: var(--ink); color: var(--ink); }
+  .btn-backup, .btn-upload { background: var(--ink); color: var(--lantern); }
+  .btn-backup:hover, .btn-upload:hover, .btn-save:hover, .btn-save-diary:hover { filter: none; }
+  .btn-save, .btn-save-diary { background: var(--burg); }
+  .btn-del { color: var(--ink); border-color: var(--ink); }
+  .btn-del:hover { background: var(--ink); color: var(--lantern); }
+  .btn-back { padding: 12px 22px; margin: 0 0 22px; }
+
+  /* --- inputs --- */
+  input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], textarea, .cd-input, .search-box {
+    border: 3px solid var(--ink); border-radius: 0; background: #fff;
+  }
+  .search-box { box-shadow: 6px 6px 0 var(--ink); margin: 0 6px 20px 0; width: calc(100% - 6px); }
+  input:focus, textarea:focus, .search-box:focus { border-color: var(--burg); }
+  :focus-visible { outline: 4px solid var(--burg); outline-offset: 3px; }
+
+  /* --- modals and doors --- */
+  .overlay { background: rgba(30, 26, 23, 0.82); }
+  .modal { margin: 10px auto 30px; }
+  .modal-head h2 { font-weight: 400; font-size: 1.7rem; }
+  .door { border: 4px solid var(--ink) !important; border-radius: 0; box-shadow: 6px 6px 0 var(--ink); transition: transform .09s, box-shadow .09s; }
+  .door:hover { transform: none; }
+  .door:active { transform: translate(6px, 6px); box-shadow: 0 0 0 var(--ink); }
+  .doors { gap: 18px; margin-right: 6px; }
+  .form-section h3, .booking-box h3, .diary-write h3, .backup-box h3, .db-head, .cd-name, .row-title, .cal-title, .diary-sec-title { font-weight: 400; }
+  .summary-card.ent { border-color: var(--ink); border-left: 14px solid var(--burg); }
+
+  /* --- diary calendar --- */
+  .cal-day { border: 3px solid var(--ink); border-radius: 0; }
+  .cal-day:hover { border-color: var(--ink); }
+  .cal-day.has { background: var(--burg); border-color: var(--ink); }
+  .cal-day.today { border-color: var(--ink); box-shadow: inset 0 0 0 3px var(--lantern); }
+  .cal-day.sel { outline: 4px solid var(--burg); }
+  .diary-card mark { background: var(--lantern); }
+
+  /* --- signature and toast --- */
+  .signature { border-top: 4px solid var(--ink); }
+  .signature .made { font-weight: 400; }
+  .signature .site { color: var(--ink); border-bottom: 3px solid var(--ink); }
+  .signature .laws a { color: var(--ink); }
+  .toast { background: var(--ink); color: var(--lantern); border: 3px solid var(--lantern); border-radius: 0; box-shadow: 6px 6px 0 rgba(0,0,0,.4); }
+
+</style>
+</head>
+<body>
+
+<a class="sponsor" id="sponsor-top" href="https://getvirtualreader.com" target="_blank" rel="noopener">
+  Created by <b>GetVirtualReader.com</b>
+</a>
+
+<header>
+  <h1>IArtist</h1>
+  <div class="subtitle">Free Tracking App for Serious Actors and Models</div>
+</header>
+
+<div class="big-btns">
+  <button class="btn-big btn-did" onclick="openOverlay('ov-what')">Auditions</button>
+  <button class="btn-big btn-booked" onclick="openOverlay('ov-bookwhich')">I BOOKED a Job</button>
+</div>
+
+<div class="faces">
+  <button class="face-tab active" id="face-graphs" onclick="showFace('graphs')">MY GRAPHS</button>
+  <button class="face-tab" id="face-db" onclick="showFace('db')">DATABASE</button>
+  <button class="face-tab" id="face-diary" onclick="showFace('diary')">MY DIARY BOOK</button>
+</div>
+
+<div class="year-bar" id="year-bar"></div>
+
+<!-- ===== GRAPHS FACE ===== -->
+<div id="view-graphs">
+  <div class="mode-row">
+    <button class="mode-chip active" id="mode-month" onclick="setGraphMode('month')">By Month</button>
+    <button class="mode-chip" id="mode-year" onclick="setGraphMode('year')">By Year</button>
+  </div>
+  <div class="chart-hint" style="margin:0 0 14px">Tap any month on a chart to see the jobs behind it, then tap a job to open it.</div>
+  <div class="chart-box"><h3 style="color:var(--burg)">Acting Auditions</h3><div class="chart-total" id="tot-act-aud"></div><div class="chart-scroll"><div id="ch-act-aud"></div></div></div>
+  <div class="chart-box"><h3 style="color:var(--plum)">Acting Bookings</h3><div class="chart-total" id="tot-act-book"></div><div class="chart-scroll"><div id="ch-act-book"></div></div></div>
+  <div class="chart-box"><h3 style="color:var(--wine)">Voiceover Auditions</h3><div class="chart-total" id="tot-vo-aud"></div><div class="chart-scroll"><div id="ch-vo-aud"></div></div></div>
+  <div class="chart-box"><h3 style="color:var(--steel)">Voiceover Bookings</h3><div class="chart-total" id="tot-vo-book"></div><div class="chart-scroll"><div id="ch-vo-book"></div></div></div>
+  <div class="chart-box"><h3 style="color:var(--bronze)">Modeling Bookings</h3><div class="chart-total" id="tot-mod-book"></div><div class="chart-scroll"><div id="ch-mod-book"></div></div></div>
+  <div class="chart-box"><h3 style="color:var(--forest)">Background Money</h3><div class="chart-total" id="tot-bg"></div><div class="chart-scroll"><div id="ch-bg"></div></div>
+    <div style="margin-top:16px" id="ch-bg-companies"></div></div>
+  <div class="chart-box"><h3 style="color:var(--grey)">Callbacks</h3><div class="chart-total" id="tot-callback"></div><div class="chart-scroll"><div id="ch-callback"></div></div></div>
+  <div class="chart-box"><h3>My Agency vs. Myself</h3><div class="chart-total">Every audition you go up for — who is really getting you in the room.</div>
+    <div class="legend"><span><i style="background:#3F5E75"></i>My Agency</span><span><i style="background:#800020"></i>Myself</span></div><div class="chart-scroll"><div id="ch-agency"></div></div></div>
+</div>
+
+<!-- ===== DATABASE FACE ===== -->
+<div id="view-db" style="display:none">
+  <div id="db-home">
+    <div class="db-grid" id="db-grid"></div>
+    <div class="export-row">
+      <button class="btn-small" onclick="downloadReport()">Summary Report</button>
+      <button class="btn-small" onclick="exportBookingsSheet()">Bookings Sheet (CSV)</button>
+    </div>
+
+    <div class="backup-box">
+      <h3>Back Up &amp; Move To Another Device</h3>
+      <p>This backs up your WHOLE app &mdash; every acting and voiceover audition, every booking, modeling, background jobs,
+         casting directors, and your whole diary book &mdash; in one single file.
+         It is all saved inside this browser only. Chrome on your laptop, Safari on your phone and any tablet
+         each keep their own separate copy &mdash; they do not talk to each other. To move everything, or to keep it safe,
+         press Back Up Everything here, then open this app on the other device and press Restore From Backup and pick that file.</p>
+      <div class="backup-row">
+        <button class="btn-backup" onclick="backupEverything()">Back Up Everything</button>
+        <button class="btn-backup" onclick="document.getElementById('restore-file').click()">Restore From Backup</button>
+        <input type="file" id="restore-file" accept=".json,application/json" style="display:none" onchange="restoreEverything(this)">
+      </div>
+    </div>
+  </div>
+  <div id="db-detail" style="display:none">
+    <button class="btn-back" onclick="dbBack()">&larr; Back to Database</button>
+    <div id="db-content"></div>
+  </div>
+</div>
+
+<!-- ===== DIARY FACE ===== -->
+<div id="view-diary" style="display:none">
+  <div class="diary-write">
+    <h3>Write it down</h3>
+    <div class="diary-daterow">
+      <input type="date" id="diary-date" onchange="diaryDateChanged()">
+      <span class="diary-when" id="diary-when"></span>
+    </div>
+    <textarea id="diary-text" placeholder="What happened today? Who did you meet? What did you think? Write as much as you want."></textarea>
+    <div class="diary-actions">
+      <button class="btn-save-diary" onclick="diarySaveEntry()">Save This Day</button>
+      <button class="btn-small" onclick="diaryPick(todayISO())">Go to Today</button>
+    </div>
+  </div>
+
+  <input type="text" class="search-box" id="diary-search" placeholder="Search your diary — a name, a place, a month, anything" oninput="diarySearchChanged()">
+  <div id="diary-body"></div>
+</div>
+
+<!-- ===== MODAL: WHAT IS THIS? ===== -->
+<div class="overlay" id="ov-what">
+  <div class="modal">
+    <div class="modal-head"><h2>Which audition?</h2><button class="btn-close" onclick="closeOverlay('ov-what')">Close</button></div>
+    <div class="doors">
+      <button class="door" style="border-color:var(--burg);color:var(--burg)" onclick="closeOverlay('ov-what');openAudForm('acting')">Acting<br>Audition</button>
+      <button class="door" style="border-color:var(--wine);color:var(--wine)" onclick="closeOverlay('ov-what');openAudForm('voiceover')">Voiceover<br>Audition</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: I BOOKED — WHICH KIND? ===== -->
+<div class="overlay" id="ov-bookwhich">
+  <div class="modal">
+    <div class="modal-head"><h2>What do you book?</h2><button class="btn-close" onclick="closeOverlay('ov-bookwhich')">Close</button></div>
+    <div class="doors">
+      <button class="door" style="border-color:var(--burg);color:var(--burg)" onclick="openHowBooked('acting')">Acting</button>
+      <button class="door" style="border-color:var(--wine);color:var(--wine)" onclick="openHowBooked('voiceover')">Voiceover</button>
+      <button class="door" style="border-color:var(--mauve);color:var(--mauve)" onclick="closeOverlay('ov-bookwhich');bookSection='modeling';openDirectBooking()">Modeling</button>
+      <button class="door" style="border-color:var(--forest);color:var(--forest)" onclick="closeOverlay('ov-bookwhich');openBgForm()">Background</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: AUDITION OR DIRECT INVITATION? ===== -->
+<div class="overlay" id="ov-howbooked">
+  <div class="modal">
+    <div class="modal-head"><h2 id="howbooked-title">How did you book it?</h2><button class="btn-close" onclick="closeOverlay('ov-howbooked')">Close</button></div>
+    <div class="doors">
+      <button class="door" style="border-color:var(--burg);color:var(--burg)" onclick="howBookedPick('audition')">Through an<br>Audition</button>
+      <button class="door" style="border-color:var(--slate);color:var(--slate)" onclick="howBookedPick('direct')">Direct<br>Invitation</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: PICK THE AUDITION YOU BOOKED ===== -->
+<div class="overlay" id="ov-booklist">
+  <div class="modal">
+    <div class="modal-head"><h2 id="booklist-title">Which audition did you book?</h2><button class="btn-close" onclick="closeOverlay('ov-booklist')">Close</button></div>
+    <input type="text" class="search-box" id="booklist-search" placeholder="Search by project name" oninput="renderBookList()" />
+    <div id="booklist-rows"></div>
+    <button class="btn-small" style="width:100%;padding:16px;margin-top:12px;font-size:1.05rem" onclick="openForgotten()">I Auditioned but Never Logged It — Write What I Recall</button>
+  </div>
+</div>
+
+<!-- ===== MODAL: DIRECT BOOKING (no audition) ===== -->
+<div class="overlay" id="ov-direct">
+  <div class="modal">
+    <div class="modal-head"><h2 id="direct-title">Direct Invitation</h2><button class="btn-close" onclick="closeOverlay('ov-direct')">Close</button></div>
+    <div class="form-section">
+      <h3 id="direct-sub">They Invited You Directly — There Was No Audition</h3>
+      <div class="hint" id="direct-hint" style="margin-bottom:10px"></div>
+      <div class="form-grid">
+        <div class="field"><label id="d-datelabel">Date Booked</label><input type="date" id="d-date" /></div>
+        <div class="field full"><label>Project / Product</label><input type="text" id="d-project" placeholder="What is the job" /></div>
+        <div class="field"><label>Pay $</label><input type="number" id="d-pay" placeholder="0" min="0" step="0.01" /></div>
+        <div class="pair"><div class="field"><label>Casting Director</label><input type="text" id="d-cd" placeholder="Their name" /></div><div class="field"><label>Email</label><input type="email" id="d-cdemail" placeholder="Their email address" /></div></div>
+        <div class="field full"><label>Casting Company</label><input type="text" id="d-cdcompany" placeholder="The casting office" /></div>
+        <div class="pair"><div class="field"><label>Producer</label><input type="text" id="d-producer" placeholder="Their name" /></div><div class="field"><label>Email</label><input type="email" id="d-produceremail" placeholder="Their email address" /></div></div>
+        <div class="pair" id="d-fld-photographer"><div class="field"><label>Photographer</label><input type="text" id="d-photographer" placeholder="Their name" /></div><div class="field"><label>Email</label><input type="email" id="d-photographeremail" placeholder="Their email address" /></div></div>
+        <div class="pair" id="d-fld-dp"><div class="field"><label>Director of Photography</label><input type="text" id="d-dp" placeholder="Their name" /></div><div class="field"><label>Email</label><input type="email" id="d-dpemail" placeholder="Their email address" /></div></div>
+
+        <div class="field full" id="d-fld-type"><label>Type</label><div class="chip-select" id="d-type"></div></div>
+        <div class="field full"><label>Union</label><div class="chip-select" id="d-union"></div></div>
+        <div class="field full"><label>Who Got You In</label><div class="chip-select" id="d-source"></div></div>
+        <div class="field full"><label>Where It Came From</label><div class="chip-select" id="d-platform"></div>
+          <input type="text" id="d-platform-other" placeholder="Type where it came from" style="display:none;margin-top:8px" /></div>
+        <div class="field full"><label>Notes</label><textarea id="d-notes" placeholder="Shoot date, who called, anything to remember"></textarea></div>
+        <div class="field full"><label>Documents — contracts, NDAs</label><textarea id="d-docs" placeholder="Paste a link or a file from your computer, one per line"></textarea>
+          <div class="hint">Mac: right-click the file in Finder, hold Option, choose "Copy as Pathname", paste it here.</div>
+          <div class="doc-upload"><button type="button" class="btn-upload" onclick="document.getElementById('d-docs-file').click()">Upload a File</button><input type="file" id="d-docs-file" style="display:none" onchange="uploadDoc(this, 'd-docs', 'd-docs-open')"></div><div id="d-docs-open"></div></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-save" onclick="saveDirect()">Save Booking</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: THE BOOKING ===== -->
+<div class="overlay" id="ov-booking">
+  <div class="modal">
+    <div class="modal-head"><h2>You booked it!</h2><button class="btn-close" onclick="closeOverlay('ov-booking')">Close</button></div>
+    <div class="form-section">
+      <h3 id="booking-what"></h3>
+      <div class="form-grid">
+        <div class="field"><label>Date You Got the Call</label><input type="date" id="bk-date" /></div>
+        <div class="field"><label>Pay $</label><input type="number" id="bk-pay" placeholder="0" min="0" step="0.01" /></div>
+        <div class="field full"><label>Booking Notes</label><textarea id="bk-notes" placeholder="Shoot date, who called, anything to remember"></textarea></div>
+        <div class="field full"><label>Documents — contracts, NDAs</label><textarea id="bk-docs" placeholder="Paste a link or a file from your computer, one per line"></textarea>
+          <div class="hint">Mac: right-click the file in Finder, hold Option, choose "Copy as Pathname", paste it here.</div>
+          <div class="doc-upload"><button type="button" class="btn-upload" onclick="document.getElementById('bk-docs-file').click()">Upload a File</button><input type="file" id="bk-docs-file" style="display:none" onchange="uploadDoc(this, 'bk-docs', 'bk-docs-open')"></div><div id="bk-docs-open"></div></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-save" onclick="saveBooking()">Save Booking</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: ACTING / VOICEOVER AUDITION FORM ===== -->
+<div class="overlay" id="ov-aud">
+  <div class="modal">
+    <div class="modal-head"><h2 id="aud-title">New Audition</h2><button class="btn-close" onclick="closeOverlay('ov-aud')">Close</button></div>
+
+    <div class="booking-box" id="aud-booked-box" style="display:none">
+      <h3>BOOKED</h3>
+      <div class="form-grid">
+        <div class="field"><label>Date Booked</label><input type="date" id="f-bookdate" /></div>
+        <div class="field"><label>Pay $</label><input type="number" id="f-bookpay" placeholder="0" min="0" step="0.01" /></div>
+        <div class="field full"><label>Booking Notes</label><textarea id="f-booknotes"></textarea></div>
+        <div class="field full"><label>Documents — contracts, NDAs</label><textarea id="f-docs" placeholder="Paste a link or a file from your computer, one per line"></textarea>
+          <div class="hint">Mac: right-click the file in Finder, hold Option, choose "Copy as Pathname", paste it here.</div>
+          <div class="doc-upload"><button type="button" class="btn-upload" onclick="document.getElementById('f-docs-file').click()">Upload a File</button><input type="file" id="f-docs-file" style="display:none" onchange="uploadDoc(this, 'f-docs', 'f-docs-open')"></div><div id="f-docs-open"></div></div>
+      </div>
+      <button class="btn-small" style="margin-top:10px" onclick="removeBooking()">Remove Booking</button>
+    </div>
+
+    <div class="form-section">
+      <h3>The Basics</h3>
+      <div class="form-grid">
+        <div class="field"><label>Audition Date</label><input type="date" id="f-date" /></div>
+        <div class="field full"><label>Project / Product</label><input type="text" id="f-project" placeholder="e.g. Toyota Spring Campaign" /></div>
+        <div class="field full" id="fld-type"><label>Type</label><div class="chip-select" id="f-type"></div></div>
+        <div class="field full"><label>Union</label><div class="chip-select" id="f-union"></div></div>
+        <div class="field full"><label>Role Name and Breakdown</label><textarea id="f-role" placeholder="Role name, and how the breakdown describes the character"></textarea></div>
+        <div class="field full"><label>Who Got You In</label><div class="chip-select" id="f-source"></div></div>
+        <div class="field full"><label>Where It Came From</label><div class="chip-select" id="f-platform"></div>
+          <input type="text" id="f-platform-other" placeholder="Type where it came from" style="display:none;margin-top:8px" /></div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>Where and Who</h3>
+      <div class="form-grid">
+        <div class="field full"><label>How</label><div class="chip-select" id="f-format"></div></div>
+        <div class="field full"><label>Location / Studio</label><input type="text" id="f-where" placeholder="Casting office, studio, or self-tape at home" /></div>
+        <div class="pair"><div class="field"><label>Casting Director</label><input type="text" id="f-cd" list="cd-datalist" placeholder="Their name" /><datalist id="cd-datalist"></datalist></div><div class="field"><label>Email</label><input type="email" id="f-cdemail" placeholder="Their email address" /></div></div>
+        <div class="field full"><label>Casting Company</label><input type="text" id="f-cdcompany" placeholder="The casting office" /></div>
+        <div class="pair"><div class="field"><label>Director</label><input type="text" id="f-director" placeholder="Their name" /></div><div class="field"><label>Email</label><input type="email" id="f-directoremail" placeholder="Their email address" /></div></div>
+        <div class="pair"><div class="field"><label>Producer</label><input type="text" id="f-producer" placeholder="Their name" /></div><div class="field"><label>Email</label><input type="email" id="f-produceremail" placeholder="Their email address" /></div></div>
+        <div class="pair" id="fld-photographer"><div class="field"><label>Photographer</label><input type="text" id="f-photographer" placeholder="Their name" /></div><div class="field"><label>Email</label><input type="email" id="f-photographeremail" placeholder="Their email address" /></div></div>
+        <div class="pair" id="fld-dp"><div class="field"><label>Director of Photography</label><input type="text" id="f-dp" placeholder="Their name" /></div><div class="field"><label>Email</label><input type="email" id="f-dpemail" placeholder="Their email address" /></div></div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>The Audition</h3>
+      <div class="form-grid">
+        <div class="field full"><label>Self-Tape Submitted</label><input type="text" id="f-tapelink" placeholder="Paste a link (Dropbox, Drive) or a video file from your computer" />
+          <div class="hint">Mac: right-click the video in Finder, hold Option, choose "Copy as Pathname", paste it here.</div>
+        </div>
+        <div class="field full"><label>Notes</label><textarea id="f-notes" placeholder="Notes from your agent, manager or casting director — or a note to yourself"></textarea></div>
+        <div class="field full" id="fld-status"><label>Status</label><div class="chip-select" id="f-status"></div>
+          <div class="hint">When you book it, use the I BOOKED button on the front page.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-save" onclick="saveAud()">Save</button>
+      <button class="btn-del" id="aud-delete" style="display:none" onclick="deleteAud()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: BACKGROUND JOB FORM ===== -->
+<div class="overlay" id="ov-bg">
+  <div class="modal">
+    <div class="modal-head"><h2 id="bg-title">Background Job</h2><button class="btn-close" onclick="closeOverlay('ov-bg')">Close</button></div>
+    <div class="form-section">
+      <h3>The Job</h3>
+      <div class="form-grid">
+        <div class="field"><label>Date</label><input type="date" id="g-date" /></div>
+        <div class="field full"><label>Job / Show Name</label><input type="text" id="g-project" placeholder="e.g. Lincoln Lawyer" /></div>
+        <div class="field full"><label>Type</label><div class="chip-select" id="g-type"></div></div>
+        <div class="pair"><div class="field"><label>Who Hired You</label><input type="text" id="g-company" placeholder="Their name or company" /></div><div class="field"><label>Email</label><input type="email" id="g-companyemail" placeholder="Their email address" /></div></div>
+        <div class="field full"><label>Came Through</label><div class="chip-select" id="g-site"></div>
+          <input type="text" id="g-site-other" placeholder="Type the company name" style="display:none;margin-top:8px" /></div>
+        <div class="field full"><label>Union</label><div class="chip-select" id="g-union"></div></div>
+        <div class="pair"><div class="field"><label>Casting Director / Company</label><input type="text" id="g-cd" placeholder="Their name or the company" /></div><div class="field"><label>Email</label><input type="email" id="g-cdemail" placeholder="Their email address" /></div></div>
+        <div class="field"><label>Money $</label><input type="number" id="g-pay" placeholder="0" min="0" step="0.01" /></div>
+        <div class="field full"><label>Notes</label><textarea id="g-notes" placeholder="Anything to remember"></textarea></div>
+        <div class="field full"><label>Documents — contracts, NDAs</label><textarea id="g-docs" placeholder="Paste a link or a file from your computer, one per line"></textarea>
+          <div class="doc-upload"><button type="button" class="btn-upload" onclick="document.getElementById('g-docs-file').click()">Upload a File</button><input type="file" id="g-docs-file" style="display:none" onchange="uploadDoc(this, 'g-docs', 'g-docs-open')"></div><div id="g-docs-open"></div></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-save" onclick="saveBg()">Save</button>
+      <button class="btn-del" id="bg-delete" style="display:none" onclick="deleteBg()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<footer class="signature" id="app-signature">
+  <a class="sponsor bottom" href="https://getvirtualreader.com" target="_blank" rel="noopener">
+    Created by <b>GetVirtualReader.com</b>
+  </a>
+  <div class="made">This app was created by Carlos Flores, actor and photographer.</div>
+  <a class="site" href="https://karloz.art" target="_blank" rel="noopener">karloz.art</a>
+  <div class="legal">
+    Copyright &copy; 2026 Carlos Flores. All rights reserved. I made this app &mdash; the way it works,
+    the way it looks, and the words in it. Share this file with anyone you want, just keep it whole and
+    do not change it. Do not copy it, sell it, or use any part of it to build your own app, and do not
+    take this notice off. If you do, you are breaking copyright law.
+  </div>
+  <div class="lawhead">The law this is based on &mdash; read it yourself:</div>
+  <div class="laws">
+    <a href="https://www.law.cornell.edu/uscode/text/17/102" target="_blank" rel="noopener">17 U.S. Code &sect;102</a>
+    &mdash; original work like this is protected the moment it is written.<br>
+    <a href="https://www.law.cornell.edu/uscode/text/17/106" target="_blank" rel="noopener">17 U.S. Code &sect;106</a>
+    &mdash; only the author may copy it, sell it, or build something new from it.<br>
+    <a href="https://www.law.cornell.edu/uscode/text/17/501" target="_blank" rel="noopener">17 U.S. Code &sect;501</a>
+    &mdash; anyone who does those things without permission is an infringer.<br>
+    <a href="https://www.law.cornell.edu/uscode/text/17/1202" target="_blank" rel="noopener">17 U.S. Code &sect;1202</a>
+    &mdash; taking this notice off is its own separate violation.<br>
+    <a href="https://www.copyright.gov/circs/circ61.pdf" target="_blank" rel="noopener">U.S. Copyright Office, Circular 61</a>
+    &mdash; how software like this is registered.
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ============ CONSTANTS ============
+  const KEY = 'iartist_v1';
+  const OLD_BACKUP_KEY = 'iartist_v1_before_restructure';
+
+  const COLORS = {
+    actAud: '#800020', actBook: '#2D0515',
+    voAud: '#9E4B5B', voBook: '#3F5E75',
+    modAud: '#6B4A6E', callback: '#5A5A5A', modBook: '#8C5B2F',
+    bg: '#2F6B5E',
+    agency: '#3F5E75', myself: '#800020',
+  };
+  const ACT_TYPES = ['Commercial','Theatrical','Industrial','Vertical / Web Series','Live Theater','UGC','Hosting','Broadcast','Teleprompter','Trade Show Demonstrations','Medical / Patient'];
+  const VO_TYPES = ['Animation','Audiobooks','Radio','TV','Promo','Dubbing','Video Games'];
+  const MOD_TYPES = ['Print','E-Commerce / Catalog','Runway','Fit Model','Commercial Video','TV / Broadcast','Social Media / Online','Trade Show / Promotional'];
+  const UNIONS = ['Union','Non-Union'];
+  const FORMATS = ['In Person','Self-Tape','Zoom / Virtual'];
+  const SOURCES = ['Agent','Manager','Connection','Myself'];
+  const WHERE_FROM = ['Actors Access','Casting Networks','Backstage','Direct from Casting','Other'];
+  const ACT_SITES = ['Actors Access','Casting Networks','Backstage','Other'];
+  const BG_TYPES = ['Background','Stand-In','Photo Double','Featured'];
+  const BG_SITES = ['Central Casting','Extra Management','Everyset','LAuncut','Alessi','Backstage','Other'];
+  const STATUSES = [ {id:'auditioned', label:'Auditioned'}, {id:'callback', label:'Callback'} ];
+  const SECTION_LABEL = { acting: 'Acting', voiceover: 'Voiceover', modeling: 'Modeling' };
+  const FIRST_YEAR = 2026;
+
+  // ============ HELPERS ============
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function todayISO() { const d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  function fmtDate(iso) {
+    if (!iso) return '';
+    const [y,m,d] = iso.split('-').map(Number);
+    return new Date(y, m-1, d).toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+  }
+  function fmtMoney(n) { return '$' + (Math.round((n||0)*100)/100).toLocaleString(); }
+  function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  // One box holds "Ana Ruiz, ana@ruizphoto.com" — split it for the database.
+  function splitPerson(v) {
+    const t = (v||'').trim();
+    const m = t.match(/[^\s,;<>()]+@[^\s,;<>()]+\.[^\s,;<>()]+/);
+    const email = m ? m[0] : '';
+    const name = (email ? t.replace(email, '') : t).replace(/[,;<>()]+/g, ' ').replace(/\s+/g, ' ').trim();
+    return { name, email };
+  }
+  function joinPerson(name, email) { return [(name||'').trim(), (email||'').trim()].filter(Boolean).join(', '); }
+  function cdKey(name) { return (name||'').trim().toLowerCase(); }
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.style.display = 'block';
+    clearTimeout(t._h); t._h = setTimeout(() => t.style.display = 'none', 2600);
+  }
+  function openOverlay(id) { document.getElementById(id).classList.add('open'); window.scrollTo(0,0); }
+  function closeOverlay(id) { document.getElementById(id).classList.remove('open'); }
+
+  // ============ STORE AND MIGRATION ============
+  function freshStore() {
+    return { v: 2, acting: [], voiceover: [], modeling: [], background: [], diary: {}, files: {}, cdInfo: {}, peopleInfo: {}, settings: {} };
+  }
+
+  function migrateOld(old) {
+    const s = freshStore();
+    s.settings = old.settings || {};
+    Object.keys(old.cdContacts||{}).forEach(k => { (s.cdInfo[k] = s.cdInfo[k]||{}).contact = old.cdContacts[k]; });
+    Object.keys(old.cdNotes||{}).forEach(k => { (s.cdInfo[k] = s.cdInfo[k]||{}).notes = old.cdNotes[k]; });
+    (old.auditions||[]).forEach(a => {
+      let type = a.type;
+      if (type === 'Background / Extra') type = 'Background';
+      if (type === 'Theatrical (Film & TV)') type = 'Theatrical';
+      const extras = [];
+      if (a.producer) extras.push('Producer: '+a.producer);
+      if (a.wardrobe) extras.push('Wardrobe: '+a.wardrobe);
+      if (a.address) extras.push('Address: '+a.address);
+      if (a.phone) extras.push('Casting phone: '+a.phone);
+      if (a.setPhone) extras.push('Set phone: '+a.setPhone);
+      if (a.setNotes) extras.push(a.setNotes);
+      if (a.voucher) extras.push('Voucher: '+a.voucher);
+      const notes = [a.notes, ...extras].filter(Boolean).join('\n');
+      if (type === 'Background' || type === 'Stand-In') {
+        s.background.push({ id: a.id, date: a.date||'', project: a.project||'',
+          company: (a.cd||'').trim(), site: a.platform||'', pay: a.paid||0, notes });
+      } else {
+        const booked = a.status === 'booked';
+        const entry = {
+          id: a.id, date: a.date||'', project: a.project||'',
+          type: type === 'Voice Over' ? '' : (type||''),
+          union: a.union||'', role: a.role||'', format: a.format||'', where: a.where||'',
+          cd: a.cd||'', cdPhone: '', director: a.director||'', tapeLink: a.tapeLink||'',
+          source: a.source||'', platform: a.platform||'', notes,
+          status: booked ? 'booked' : (a.status === 'callback' || a.status === 'avail' ? 'callback' : 'auditioned'),
+          bookedDate: booked ? (a.date||'') : '', bookedPay: booked ? (a.paid||0) : 0, bookedNotes: '',
+        };
+        if (type === 'Voice Over') s.voiceover.push(entry); else s.acting.push(entry);
+      }
+    });
+    return s;
+  }
+
+  // Modeling became its own bookings-only section (Sept 3, 2026): booked acting
+  // entries typed Modeling move over once; modeling has no auditions, so
+  // anything Modeling that never booked stays in acting untouched.
+  // Modeling has no auditions (Carlos, Sep 4 2026). Any modeling entry that was
+  // logged as an audition before this moves to acting, typed Modeling, so it stays visible.
+  function moveModelingAuditions(s) {
+    if (s.settings.modAudMovedV1) return s;
+    const movers = s.modeling.filter(e => e.status !== 'booked');
+    s.modeling = s.modeling.filter(e => e.status === 'booked');
+    movers.forEach(e => { e.type = 'Modeling'; s.acting.push(e); });
+    s.settings.modAudMovedV1 = true;
+    return s;
+  }
+  function splitModeling(s) {
+    if (s.settings.modelingSplitV1) return s;
+    const movers = s.acting.filter(e => e.type === 'Modeling' && e.status === 'booked');
+    s.acting = s.acting.filter(e => !(e.type === 'Modeling' && e.status === 'booked'));
+    movers.forEach(e => { e.type = ''; s.modeling.push(e); });
+    s.settings.modelingSplitV1 = true;
+    return s;
+  }
+
+  // Older records said SAG-AFTRA or AEA. Both mean Union now.
+  function normaliseUnions(s) {
+    ['acting','voiceover','modeling','background'].forEach(k => {
+      (s[k]||[]).forEach(e => {
+        if (e.union === 'SAG-AFTRA' || e.union === 'AEA') e.union = 'Union';
+        // Who got you in, and where it came from, are two different answers.
+        const PERSON = { 'Agent':'Agent', 'Manager':'Manager', 'Connection':'Connection',
+                         'Myself':'Myself', 'Self-Submitted':'Myself', 'Self-Submission':'Myself',
+                         'Direct Request':'Connection' };
+        const vals = [e.source||'', e.platform||''];
+        e.source = vals.map(v => PERSON[v]).find(Boolean) || '';
+        e.platform = vals.find(v => v && !PERSON[v]) || '';
+      });
+    });
+    // The background Producer box became Casting Director / Company; move old answers over.
+    (s.background||[]).forEach(e => {
+      if (!(e.cd||'').trim() && (e.producer||'').trim()) {
+        e.cd = e.producer; e.cdEmail = e.cdEmail || e.producerEmail || '';
+        e.producer = ''; e.producerEmail = '';
+      }
+    });
+    // Anything already typed on a Casting Director card becomes a contact.
+    s.peopleInfo = s.peopleInfo || {};
+    Object.keys(s.cdInfo || {}).forEach(k => {
+      const from = s.cdInfo[k] || {}, to = (s.peopleInfo[k] = s.peopleInfo[k] || {});
+      if (!to.email && from.contact) to.email = from.contact;
+      if (!to.phone && from.phone) to.phone = from.phone;
+      if (!to.notes && from.notes) to.notes = from.notes;
+    });
+    return s;
+  }
+  function loadStore() {
+    let raw = null;
+    try { raw = JSON.parse(localStorage.getItem(KEY)); } catch {}
+    if (raw && raw.v === 2) {
+      const s = freshStore();
+      ['acting','voiceover','modeling','background'].forEach(k => { if (Array.isArray(raw[k])) s[k] = raw[k]; });
+      s.cdInfo = raw.cdInfo || {};
+      s.peopleInfo = raw.peopleInfo || {};
+      s.settings = raw.settings || {};
+      s.diary = raw.diary || {};
+      s.files = raw.files || {};
+      return normaliseUnions(moveModelingAuditions(splitModeling(s)));
+    }
+    if (raw && Array.isArray(raw.auditions)) {
+      // Old app data found: keep an untouched safety copy, then restructure it.
+      try { if (!localStorage.getItem(OLD_BACKUP_KEY)) localStorage.setItem(OLD_BACKUP_KEY, JSON.stringify(raw)); } catch {}
+      const s = migrateOld(raw);
+      return normaliseUnions(moveModelingAuditions(splitModeling(s)));
+    }
+    // Brand-new browser: start empty.
+    return normaliseUnions(moveModelingAuditions(splitModeling(freshStore())));
+  }
+  function saveStore() {
+    try { localStorage.setItem(KEY, JSON.stringify(store)); return true; }
+    catch (err) {
+      alert('THIS BROWSER COULD NOT SAVE.\n\nYour last change is NOT stored. This usually means the storage is full — a large attached file is the usual cause.\n\nGo to DATABASE and press Back Up Everything now, before you close this page.');
+      return false;
+    }
+  }
+  let store = loadStore();
+  if (!store.diary) store.diary = {};
+  if (!store.files) store.files = {};
+  saveStore();
+
+  // ============ SHARED DATA HELPERS ============
+  const byDateDesc = (a,b) => (b.date||'').localeCompare(a.date||'');
+  const isBooked = e => e.status === 'booked';
+  // ============ THE YEAR YOU ARE LOOKING AT ============
+  // The app opens on the current year every single time, so on January 1 everything
+  // reads zero on its own. Nothing is deleted — the other years are one tap away.
+  // This is never saved, so it can never get stuck on an old year.
+  let viewYear = String(new Date().getFullYear());
+  const ALL_YEARS = 'all';
+  const inViewYear = d => viewYear === ALL_YEARS || String(d||'').startsWith(viewYear);
+  const viewYearLabel = () => viewYear === ALL_YEARS ? 'All years' : viewYear;
+  // Every year that has anything in it, plus this one.
+  function yearsWithData() {
+    const set = new Set([String(new Date().getFullYear())]);
+    const eat = (list, fn) => (list||[]).forEach(e => { const d = fn(e); if (d) set.add(String(d).slice(0,4)); });
+    ['acting','voiceover','modeling'].forEach(sec => {
+      eat(store[sec], e => e.date); eat(store[sec], e => e.bookedDate);
+    });
+    eat(store.background, e => e.date);
+    Object.keys(store.diary || {}).forEach(k => set.add(String(k).slice(0,4)));
+    return [...set].filter(y => /^\d{4}$/.test(y)).sort();
+  }
+  // Screens that pick their own year (Year at a Glance, the Summary Report) run inside
+  // this, so the year chosen on the tabs never hides their numbers.
+  function withYear(y, fn) {
+    const was = viewYear;
+    viewYear = y;
+    try { return fn(); } finally { viewYear = was; }
+  }
+  const bookings = section => store[section].filter(e => isBooked(e) && inViewYear(e.bookedDate || e.date));
+  const bgList = () => store.background.filter(e => inViewYear(e.date));
+  const fromAgency = e => e.source === 'Agent' || e.source === 'Manager';
+  // A direct booking (they hired you with no audition) is never counted as an audition.
+  const isRealAudition = e => !e.direct;
+  // A callback stays on the record even after the audition turns into a booking.
+  const hasCallback = e => !!e.hadCallback || e.status === 'callback';
+  const allCallbacks = () => ['acting','voiceover']
+    .flatMap(sec => store[sec].filter(e => isRealAudition(e) && hasCallback(e) && inViewYear(e.date))
+      .map(e => ({ ...e, _sec: sec })));
+  const auditions = section => store[section].filter(e => isRealAudition(e) && inViewYear(e.date));
+
+  // ============ DOCUMENTS ============
+  // Files the user uploads are kept inside the app itself, so they travel with the backup.
+  const FILE_TOKEN = /^saved-file:\s*(.*)#([a-z0-9]+)$/i;
+
+  function uploadDoc(input, taId, openElId) {
+    const file = input.files && input.files[0];
+    input.value = '';
+    if (!file) return;
+    if (file.size > 400 * 1024) { alert('That file is bigger than 400 KB, which is too big to keep inside this app.\n\nUse a smaller file, or paste a link to it instead.'); return; }
+    const reader = new FileReader();
+    reader.onload = function () {
+      const id = newId();
+      store.files[id] = { name: file.name, type: file.type || '', data: reader.result };
+      // If keeping the file would not fit, put the app back the way it was.
+      if (!saveStore()) { delete store.files[id]; saveStore(); return; }
+      const ta = document.getElementById(taId);
+      const lines = ta.value.split('\n').map(x => x.trim()).filter(Boolean);
+      lines.push('saved-file: ' + file.name + ' #' + id);
+      ta.value = lines.join('\n');
+      renderDocButtons(openElId, ta.value);
+      showToast(file.name + ' attached');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function openSavedFile(id) {
+    const f = store.files[id];
+    if (!f) { alert('That file is no longer saved in this browser.'); return; }
+    const parts = String(f.data).split(',');
+    const bytes = atob(parts[1] || '');
+    const buf = new Uint8Array(bytes.length);
+    for (let i = 0; i < bytes.length; i++) buf[i] = bytes.charCodeAt(i);
+    const url = URL.createObjectURL(new Blob([buf], { type: f.type || 'application/octet-stream' }));
+    window.open(url, '_blank');
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  }
+
+  function openDoc(line) {
+    const saved = FILE_TOKEN.exec(line.trim());
+    if (saved) { openSavedFile(saved[2]); return; }
+    let url = line.trim();
+    if (!url) return;
+    if (url.startsWith('/') || url.startsWith('~/')) {
+      url = 'file://' + encodeURI(url.replace(/^~/, '/Users/carlosflores'));
+    } else if (!/^(https?|file):\/\//i.test(url)) {
+      url = 'https://' + url;
+    }
+    window.open(url, '_blank');
+  }
+  function docLabel(line) {
+    const saved = FILE_TOKEN.exec(line.trim());
+    if (saved) return saved[1].trim();
+    const t = line.trim().replace(/\/+$/, '');
+    const last = t.split('/').pop();
+    return last && last.length < 60 ? last : t.slice(0, 57) + '...';
+  }
+  function renderDocButtons(elId, docsStr) {
+    const el = document.getElementById(elId);
+    el.innerHTML = '';
+    (docsStr||'').split('\n').map(s => s.trim()).filter(Boolean).forEach(line => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'btn-small';
+      b.style.marginRight = '8px'; b.style.marginTop = '8px';
+      b.textContent = 'Open: ' + docLabel(line);
+      b.onclick = () => openDoc(line);
+      el.appendChild(b);
+    });
+  }
+
+  // ============ FACES ============
+  let currentFace = 'graphs';
+  function showFace(f) {
+    currentFace = f;
+    document.getElementById('view-graphs').style.display = f === 'graphs' ? '' : 'none';
+    document.getElementById('view-db').style.display = f === 'db' ? '' : 'none';
+    document.getElementById('view-diary').style.display = f === 'diary' ? '' : 'none';
+    document.getElementById('face-graphs').classList.toggle('active', f === 'graphs');
+    document.getElementById('face-db').classList.toggle('active', f === 'db');
+    document.getElementById('face-diary').classList.toggle('active', f === 'diary');
+    document.getElementById('year-bar').style.display = f === 'diary' ? 'none' : '';
+    if (f !== 'diary') diaryKeepTyping();
+    if (f === 'graphs') renderGraphs();
+    if (f === 'db') { dbBack(); renderDbHome(); }
+    if (f === 'diary') openDiary();
+  }
+
+  // ============ DIARY BOOK ============
+  const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  let diaryDate = todayISO();
+  let diaryMonth = todayISO().slice(0,7);
+
+  function diaryText(iso) { return (store.diary && store.diary[iso] && store.diary[iso].text) || ''; }
+  function diaryDays() { return Object.keys(store.diary || {}).filter(k => diaryText(k)).sort().reverse(); }
+
+  // Whatever is in the box belongs to the day it was written for — keep it before moving.
+  function diaryKeepTyping() {
+    const ta = document.getElementById('diary-text');
+    if (!ta) return;
+    const typed = ta.value.trim();
+    if (typed && typed !== diaryText(diaryDate)) {
+      store.diary[diaryDate] = { text: typed, updated: new Date().toISOString() };
+      saveStore();
+    }
+  }
+  function openDiary() {
+    document.getElementById('diary-date').value = diaryDate;
+    document.getElementById('diary-text').value = diaryText(diaryDate);
+    document.getElementById('diary-when').textContent = fmtDate(diaryDate);
+    renderDiaryBody();
+  }
+  function diaryDateChanged() {
+    const d = document.getElementById('diary-date').value;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) { showToast('Pick a real date'); return; }
+    diaryKeepTyping();
+    diaryDate = d; diaryMonth = d.slice(0,7);
+    openDiary();
+  }
+  function diaryPick(iso) {
+    diaryKeepTyping();
+    diaryDate = iso; diaryMonth = iso.slice(0,7);
+    openDiary();
+    window.scrollTo(0,0);
+    document.getElementById('diary-text').focus();
+  }
+  function diarySaveEntry() {
+    const d = document.getElementById('diary-date').value;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) { showToast('Pick a date first'); return; }
+    const text = document.getElementById('diary-text').value.trim();
+    if (!store.diary) store.diary = {};
+    if (text) store.diary[d] = { text: text, updated: new Date().toISOString() };
+    else {
+      if (diaryText(d) && !confirm('Erase everything written on ' + fmtDate(d) + '?')) return;
+      delete store.diary[d];
+    }
+    saveStore();
+    diaryDate = d; diaryMonth = d.slice(0,7);
+    openDiary();
+    showToast(text ? 'Saved to your diary' : 'That day was cleared');
+  }
+  function diaryShiftMonth(n) {
+    const y = Number(diaryMonth.slice(0,4)), m = Number(diaryMonth.slice(5,7));
+    const d = new Date(y, m - 1 + n, 1);
+    diaryMonth = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+    renderDiaryBody();
+  }
+  function diarySearchChanged() { renderDiaryBody(true); }
+
+  // Every word must appear somewhere in the entry or in that day's date words.
+  function diaryHaystack(iso) {
+    const y = Number(iso.slice(0,4)), m = Number(iso.slice(5,7));
+    return (diaryText(iso) + ' ' + fmtDate(iso) + ' ' + MONTH_NAMES[m-1] + ' ' + y).toLowerCase();
+  }
+  function diaryHighlight(text, words) {
+    let h = esc(text);
+    words.forEach(w => {
+      const safe = w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      h = h.replace(new RegExp('(' + safe + ')', 'gi'), '<mark>$1</mark>');
+    });
+    return h;
+  }
+  function diaryCardHTML(iso, words) {
+    const t = diaryText(iso);
+    const body = words && words.length ? diaryHighlight(t, words) : esc(t);
+    return '<div class="diary-card" onclick="diaryPick(\'' + iso + '\')">' +
+      '<div class="dc-date">' + esc(fmtDate(iso)) + '</div>' +
+      '<div class="dc-text">' + body + '</div></div>';
+  }
+
+  function renderDiaryBody(keepFocus) {
+    const box = document.getElementById('diary-body');
+    const q = (document.getElementById('diary-search').value || '').trim();
+
+    if (q) {
+      const words = q.toLowerCase().split(/\s+/).filter(Boolean);
+      const hits = diaryDays().filter(iso => { const hay = diaryHaystack(iso); return words.every(w => hay.includes(w)); });
+      let h = '<div class="diary-sec-title">' + hits.length + (hits.length === 1 ? ' day found' : ' days found') + '</div>';
+      h += hits.length ? hits.map(iso => diaryCardHTML(iso, words)).join('')
+                       : '<div class="diary-note">Nothing yet with those words. Try fewer words.</div>';
+      box.innerHTML = h;
+      return;
+    }
+
+    const y = Number(diaryMonth.slice(0,4)), m = Number(diaryMonth.slice(5,7));
+    const lead = new Date(y, m-1, 1).getDay();
+    const days = new Date(y, m, 0).getDate();
+    let h = '<div class="cal-head">' +
+      '<button class="cal-nav" onclick="diaryShiftMonth(-1)">&lsaquo;</button>' +
+      '<div class="cal-title">' + MONTH_NAMES[m-1] + ' ' + y + '</div>' +
+      '<button class="cal-nav" onclick="diaryShiftMonth(1)">&rsaquo;</button></div>';
+    h += '<div class="cal-grid">';
+    ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => h += '<div class="cal-dow">' + d + '</div>');
+    for (let i = 0; i < lead; i++) h += '<div></div>';
+    for (let d = 1; d <= days; d++) {
+      const iso = y + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+      let cls = 'cal-day';
+      if (diaryText(iso)) cls += ' has';
+      if (iso === todayISO()) cls += ' today';
+      if (iso === diaryDate) cls += ' sel';
+      h += '<button class="' + cls + '" onclick="diaryPick(\'' + iso + '\')">' + d + '</button>';
+    }
+    h += '</div>';
+
+    const written = diaryDays().filter(iso => iso.slice(0,7) === diaryMonth);
+    h += '<div class="diary-sec-title">' + MONTH_NAMES[m-1] + ' entries</div>';
+    h += written.length ? written.map(iso => diaryCardHTML(iso)).join('')
+                        : '<div class="diary-note">Nothing written this month yet.</div>';
+    box.innerHTML = h;
+  }
+
+  // ============ PERIODS ============
+  function monthPeriods() {
+    const arr = [];
+    if (viewYear !== ALL_YEARS) {
+      // One clean year, January to December.
+      for (let m = 0; m < 12; m++) {
+        const d = new Date(+viewYear, m, 1);
+        arr.push({ key: viewYear+'-'+String(m+1).padStart(2,'0'),
+          label: d.toLocaleDateString('en-US',{month:'short'}) });
+      }
+      return arr;
+    }
+    const now = new Date();
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+      arr.push({ key: d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'),
+        label: d.toLocaleDateString('en-US',{month:'short'}) + " '" + String(d.getFullYear()).slice(2) });
+    }
+    return arr;
+  }
+  function yearPeriods() {
+    const arr = []; const ny = new Date().getFullYear();
+    for (let y = FIRST_YEAR; y <= Math.max(ny, FIRST_YEAR); y++) arr.push({ key: String(y), label: String(y) });
+    return arr;
+  }
+  function periodOf(iso, mode) { return mode === 'month' ? (iso||'').slice(0,7) : (iso||'').slice(0,4); }
+
+  // ============ CHARTS ============
+  // Line chart with big dots for counts
+  function lineChart(elId, periods, seriesList) {
+    const el = document.getElementById(elId);
+    const maxY = Math.max(4, ...seriesList.flatMap(s => s.values));
+    const n = periods.length;
+    const STEP = 96, PAD_L = 52, PAD_R = 44, PAD_T = 34, PAD_B = 54, H = 290;
+    const innerW = Math.max(n === 1 ? 200 : (n-1) * STEP, 260);
+    const W = PAD_L + innerW + PAD_R;
+    const innerH = H - PAD_T - PAD_B;
+    let svg = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="display:block;overflow:visible">`;
+    for (let i = 0; i <= maxY; i++) {
+      const y = PAD_T + innerH - (i/maxY)*innerH;
+      svg += `<line x1="${PAD_L}" x2="${W-PAD_R}" y1="${y}" y2="${y}" stroke="#A4ABAF" stroke-width="${i===0?1.5:0.5}"/>`;
+      if (i % (maxY > 8 ? 2 : 1) === 0)
+        svg += `<text x="${PAD_L-10}" y="${y+5}" text-anchor="end" fill="#3F4A52" font-size="17" font-family="DM Sans">${i}</text>`;
+    }
+    const xAt = i => n === 1 ? PAD_L + innerW/2 : PAD_L + i*STEP;
+    periods.forEach((p,i) => {
+      svg += `<text x="${xAt(i)}" y="${H-16}" text-anchor="middle" fill="#3F4A52" font-size="17" font-weight="700" font-family="DM Sans">${p.label}</text>`;
+    });
+    seriesList.forEach(s => {
+      const pts = s.values.map((v,i) => ({ x: xAt(i), y: PAD_T + innerH - (v/maxY)*innerH, v }));
+      if (pts.length > 1)
+        svg += `<polyline points="${pts.map(p => p.x+','+p.y).join(' ')}" fill="none" stroke="${s.color}" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+      pts.forEach(p => {
+        svg += `<circle cx="${p.x}" cy="${p.y}" r="17" fill="${s.color}" stroke="#fff" stroke-width="2"/>`;
+        svg += `<text x="${p.x}" y="${p.y+6}" text-anchor="middle" fill="#fff" font-size="17" font-weight="700" font-family="DM Sans">${p.v}</text>`;
+      });
+    });
+    if (chartDrills[elId]) {
+      periods.forEach((p,i) => {
+        const half = (n === 1 ? innerW : STEP) / 2;
+        svg += `<rect x="${xAt(i)-half}" y="0" width="${half*2}" height="${H}" fill="transparent" style="cursor:pointer" onclick="openChartDrill('${elId}',${i})"><title>See the ${p.label} list</title></rect>`;
+      });
+    }
+    svg += `</svg>`;
+    let legend = '';
+    if (seriesList.length > 1) {
+      legend = `<div class="chart-legend">` + seriesList.map(s =>
+        `<span><span class="legend-dot" style="background:${s.color}"></span>${esc(s.name)}</span>`).join('') + `</div>`;
+    }
+    el.innerHTML = svg + legend;
+    const sc = el.parentElement; if (sc.classList.contains('chart-scroll')) sc.scrollLeft = sc.scrollWidth;
+  }
+
+  // Bar chart with dollar labels for money
+  function moneyChart(elId, periods, values, color) {
+    const el = document.getElementById(elId);
+    const maxV = Math.max(100, ...values);
+    const n = periods.length;
+    const bw = 52, gap = 34, H = 240, padB = 34, padT = 34, padL = 10;
+    const W = padL + n * (bw + gap) + 10;
+    let svg = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="display:block">`;
+    periods.forEach((p,i) => {
+      const x = padL + i * (bw + gap);
+      const v = values[i];
+      const h = v / maxV * (H - padB - padT);
+      svg += `<rect x="${x}" y="${H-padB-h}" width="${bw}" height="${Math.max(h,3)}" rx="6" fill="${color}" opacity="${v?1:0.18}"/>`;
+      if (v) svg += `<text x="${x+bw/2}" y="${H-padB-h-8}" text-anchor="middle" fill="#26313B" font-size="17" font-weight="700" font-family="DM Sans">$${v.toLocaleString()}</text>`;
+      svg += `<text x="${x+bw/2}" y="${H-14}" text-anchor="middle" fill="#3F4A52" font-size="17" font-weight="700" font-family="DM Sans">${p.label}</text>`;
+    });
+    if (chartDrills[elId]) {
+      periods.forEach((p,i) => {
+        const x = padL + i * (bw + gap) - gap/2;
+        svg += `<rect x="${x}" y="0" width="${bw+gap}" height="${H}" fill="transparent" style="cursor:pointer" onclick="openChartDrill('${elId}',${i})"><title>See the ${p.label} list</title></rect>`;
+      });
+    }
+    svg += `</svg>`;
+    el.innerHTML = svg;
+    const sc = el.parentElement; if (sc.classList.contains('chart-scroll')) sc.scrollLeft = sc.scrollWidth;
+  }
+
+  // ============ TAP A BAR, SEE THE JOBS ============
+  // Every chart that has a list behind it registers here. Tapping a month opens
+  // that month's records right under the chart; tapping one opens the record.
+  const chartDrills = {};
+  function registerDrill(elId, what, periods, mode, items) {
+    chartDrills[elId] = { what, periods, mode, items };
+  }
+  function drillBoxFor(elId) {
+    const el = document.getElementById(elId);
+    if (!el) return null;
+    const box = el.closest('.chart-box');
+    if (!box) return null;
+    let d = box.querySelector('.chart-drill');
+    if (!d) {
+      d = document.createElement('div');
+      d.className = 'chart-drill';
+      const sc = el.parentElement;
+      sc.parentNode.insertBefore(d, sc.nextSibling);
+    }
+    return d;
+  }
+  function openChartDrill(elId, i) {
+    const cfg = chartDrills[elId];
+    const box = drillBoxFor(elId);
+    if (!cfg || !box) return;
+    const p = cfg.periods[i];
+    if (!p) return;
+    if (box.dataset.open === p.key) { closeChartDrill(elId); return; }
+    box.dataset.open = p.key;
+    const rows = cfg.items
+      .map((it, idx) => ({ it, idx }))
+      .filter(r => periodOf(r.it.date, cfg.mode) === p.key)
+      .sort((a,b) => (b.it.date||'').localeCompare(a.it.date||''));
+    box.innerHTML =
+      `<div class="chart-drill-head"><span>${esc(p.label)} — ${rows.length} ${rows.length === 1 ? cfg.what.one : cfg.what.many}</span>` +
+      `<button class="btn-small" onclick="closeChartDrill('${elId}')">Close</button></div>` +
+      (rows.length ? rows.map(r => `
+        <div class="row-card" onclick="drillGo('${elId}',${r.idx})">
+          ${rowDateHTML(r.it.date)}
+          <div class="row-main"><div class="row-title">${esc(r.it.title || '(no name)')}</div>
+            ${r.it.sub ? `<div class="row-sub">${esc(r.it.sub)}</div>` : ''}</div>
+          ${r.it.money ? `<div class="row-right"><span class="chip chip-money">${fmtMoney(r.it.money)}</span></div>` : ''}
+        </div>`).join('')
+        : `<div class="empty-state">Nothing in ${esc(p.label)}.</div>`);
+    box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+  function closeChartDrill(elId) {
+    const box = drillBoxFor(elId);
+    if (!box) return;
+    box.dataset.open = '';
+    box.innerHTML = '';
+  }
+  function drillGo(elId, idx) {
+    const cfg = chartDrills[elId];
+    if (!cfg) return;
+    const it = cfg.items[idx];
+    if (it && it.open) it.open();
+  }
+
+  function countsFor(list, dateFn, periods, mode) {
+    const byP = {};
+    list.forEach(e => { const d = dateFn(e); if (d) { const k = periodOf(d, mode); byP[k] = (byP[k]||0)+1; } });
+    return periods.map(p => byP[p.key]||0);
+  }
+  function sumsFor(list, dateFn, amtFn, periods, mode) {
+    const byP = {};
+    list.forEach(e => { const d = dateFn(e); if (d) { const k = periodOf(d, mode); byP[k] = (byP[k]||0) + (amtFn(e)||0); } });
+    return periods.map(p => Math.round((byP[p.key]||0)*100)/100);
+  }
+
+  function renderYearBar() {
+    const bar = document.getElementById('year-bar');
+    if (!bar) return;
+    const years = yearsWithData().slice().reverse();
+    const chip = (val, text) =>
+      `<button class="year-chip ${viewYear === val ? 'active' : ''}" onclick="setViewYear('${val}')">${text}</button>`;
+    bar.innerHTML = `<span class="year-label">Showing:</span>`
+      + years.map(y => chip(y, y)).join('')
+      + chip(ALL_YEARS, 'All Years')
+      + (viewYear === String(new Date().getFullYear())
+          ? `<div class="year-note">Every new year starts fresh here. Nothing from the years before is ever deleted — tap one to look back.</div>`
+          : `<div class="year-note">You are looking at ${viewYearLabel()}. Tap ${new Date().getFullYear()} to come back to this year.</div>`);
+  }
+  function setViewYear(y) {
+    viewYear = y;
+    renderYearBar();
+    refreshCurrent();
+    window.scrollTo(0, 0);
+  }
+
+  let graphMode = 'month';
+  function setGraphMode(m) {
+    graphMode = m;
+    document.getElementById('mode-month').classList.toggle('active', m === 'month');
+    document.getElementById('mode-year').classList.toggle('active', m === 'year');
+    renderGraphs();
+  }
+
+  function renderGraphs() { if (graphMode === 'year') withYear(ALL_YEARS, renderGraphsInner); else renderGraphsInner(); }
+  function renderGraphsInner() {
+    const mode = graphMode;
+    const periods = mode === 'month' ? monthPeriods() : yearPeriods();
+    const audDate = e => e.date, bookDate = e => e.bookedDate || e.date;
+    const SHOWING = viewYear === ALL_YEARS ? 'All years:' : viewYear + ':';
+    const inYear = d => inViewYear(d);
+    const AUD = { one: 'audition', many: 'auditions' };
+    const BOOK = { one: 'booking', many: 'bookings' };
+    // Every chart below can be tapped month by month.
+    document.querySelectorAll('.chart-drill').forEach(d => { d.dataset.open = ''; d.innerHTML = ''; });
+    Object.keys(chartDrills).forEach(k => { delete chartDrills[k]; });
+    const audItems = (sec, list, dateFn) => list.map(e => ({
+      date: dateFn(e), title: e.project, money: e.bookedPay || 0,
+      sub: [e.type, e.role, e.union].filter(Boolean).join(' · '),
+      open: () => openAudForm(sec, e.id),
+    }));
+    const drill = (elId, what, sec, list, dateFn) =>
+      registerDrill(elId, what, periods, mode, audItems(sec, list, dateFn));
+
+    // Acting
+    drill('ch-act-aud', AUD, 'acting', auditions('acting'), audDate);
+    lineChart('ch-act-aud', periods, [{ name:'Acting Auditions', color: COLORS.actAud,
+      values: countsFor(auditions('acting'), audDate, periods, mode) }]);
+    document.getElementById('tot-act-aud').innerHTML =
+      `${SHOWING} <b>${auditions('acting').filter(e => inYear(e.date)).length}</b> auditions`;
+    drill('ch-act-book', BOOK, 'acting', bookings('acting'), bookDate);
+    lineChart('ch-act-book', periods, [{ name:'Acting Bookings', color: COLORS.actBook,
+      values: countsFor(bookings('acting'), bookDate, periods, mode) }]);
+    const actBookYear = bookings('acting').filter(e => inYear(bookDate(e)));
+    document.getElementById('tot-act-book').innerHTML =
+      `${SHOWING} <b>${actBookYear.length}</b> booked, <b>${fmtMoney(actBookYear.reduce((s,e)=>s+(e.bookedPay||0),0))}</b>`;
+
+    // Voiceover
+    drill('ch-vo-aud', AUD, 'voiceover', auditions('voiceover'), audDate);
+    lineChart('ch-vo-aud', periods, [{ name:'Voiceover Auditions', color: COLORS.voAud,
+      values: countsFor(auditions('voiceover'), audDate, periods, mode) }]);
+    document.getElementById('tot-vo-aud').innerHTML =
+      `${SHOWING} <b>${auditions('voiceover').filter(e => inYear(e.date)).length}</b> auditions`;
+    drill('ch-vo-book', BOOK, 'voiceover', bookings('voiceover'), bookDate);
+    lineChart('ch-vo-book', periods, [{ name:'Voiceover Bookings', color: COLORS.voBook,
+      values: countsFor(bookings('voiceover'), bookDate, periods, mode) }]);
+    const voBookYear = bookings('voiceover').filter(e => inYear(bookDate(e)));
+    document.getElementById('tot-vo-book').innerHTML =
+      `${SHOWING} <b>${voBookYear.length}</b> booked, <b>${fmtMoney(voBookYear.reduce((s,e)=>s+(e.bookedPay||0),0))}</b>`;
+
+    // Modeling
+    drill('ch-mod-book', BOOK, 'modeling', bookings('modeling'), bookDate);
+    lineChart('ch-mod-book', periods, [{ name:'Modeling Bookings', color: COLORS.modBook,
+      values: countsFor(bookings('modeling'), bookDate, periods, mode) }]);
+    const modBookYear = bookings('modeling').filter(e => inYear(bookDate(e)));
+    document.getElementById('tot-mod-book').innerHTML =
+      `${SHOWING} <b>${modBookYear.length}</b> booked, <b>${fmtMoney(modBookYear.reduce((s,e)=>s+(e.bookedPay||0),0))}</b>`;
+
+    // Background money
+    registerDrill('ch-bg', { one: 'job', many: 'jobs' }, periods, mode, bgList().map(e => ({
+      date: e.date, title: e.project, money: e.pay || 0,
+      sub: [e.type, e.company, e.site, e.union].filter(Boolean).join(' · '),
+      open: () => openBgForm(e.id),
+    })));
+    moneyChart('ch-bg', periods, sumsFor(bgList(), e => e.date, e => e.pay, periods, mode), COLORS.bg);
+    const bgYear = bgList();
+    document.getElementById('tot-bg').innerHTML =
+      `${SHOWING} <b>${bgYear.length}</b> background jobs, <b>${fmtMoney(bgYear.reduce((s,e)=>s+(e.pay||0),0))}</b>`;
+    renderBgCompanies();
+
+    // Callbacks — acting, voiceover and modeling together
+    const cbs = allCallbacks();
+    registerDrill('ch-callback', { one: 'callback', many: 'callbacks' }, periods, mode, cbs.map(e => ({
+      date: e.date, title: e.project, money: 0,
+      sub: [SECTION_LABEL[e._sec], e.type, e.role].filter(Boolean).join(' · '),
+      open: () => openAudForm(e._sec, e.id),
+    })));
+    lineChart('ch-callback', periods, [{ name:'Callbacks', color: COLORS.callback,
+      values: countsFor(cbs, audDate, periods, mode) }]);
+    document.getElementById('tot-callback').innerHTML =
+      `${SHOWING} <b>${cbs.filter(e => inYear(e.date)).length}</b> callbacks, <b>${cbs.length}</b> all time`;
+
+    // Agency vs Myself (acting + voiceover auditions; modeling has no auditions)
+    const allAud = [...auditions('acting').map(e => ({ e, sec: 'acting' })),
+                    ...auditions('voiceover').map(e => ({ e, sec: 'voiceover' }))];
+    registerDrill('ch-agency', AUD, periods, mode, allAud.map(({e, sec}) => ({
+      date: e.date, title: e.project, money: 0,
+      sub: [fromAgency(e) ? 'My Agency' : 'Myself', SECTION_LABEL[sec], e.type].filter(Boolean).join(' · '),
+      open: () => openAudForm(sec, e.id),
+    })));
+    lineChart('ch-agency', periods, [
+      { name:'My Agency', color: COLORS.agency, values: countsFor(allAud.filter(x => fromAgency(x.e)).map(x => x.e), audDate, periods, mode) },
+      { name:'Myself', color: COLORS.myself, values: countsFor(allAud.filter(x => !fromAgency(x.e)).map(x => x.e), audDate, periods, mode) },
+    ]);
+  }
+
+  function renderBgCompanies() {
+    const el = document.getElementById('ch-bg-companies');
+    const counts = {};
+    bgList().forEach(e => {
+      const c = (e.site || e.company || 'Unknown').trim() || 'Unknown';
+      counts[c] = (counts[c]||0) + 1;
+    });
+    const rows = Object.entries(counts).sort((a,b) => b[1]-a[1]);
+    if (rows.length === 0) { el.innerHTML = ''; return; }
+    const max = Math.max(1, ...rows.map(r => r[1]));
+    el.innerHTML = `<div style="font-weight:700;color:var(--plum);margin-bottom:10px;">Where the jobs come from</div>` +
+      rows.map(([name,c]) => `
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+        <div style="min-width:130px;text-align:right;font-size:0.95rem;">${esc(name)}</div>
+        <div style="flex:1;background:var(--bg);border-radius:8px;height:28px;">
+          <div style="height:100%;border-radius:8px;background:${COLORS.bg};color:#fff;display:flex;align-items:center;padding-left:10px;font-size:0.9rem;font-weight:700;min-width:28px;width:${Math.max(c/max*100,9)}%">${c}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  // ============ DATABASE HOME ============
+  const PEOPLE_GROUPS = [
+    { id: 'people-acting',    section: 'acting',     label: 'Acting Contacts',     color: COLORS.actBook },
+    { id: 'people-modeling',  section: 'modeling',   label: 'Modeling Contacts',   color: COLORS.modBook },
+    { id: 'people-voiceover', section: 'voiceover',  label: 'Voiceover Contacts',  color: COLORS.voBook },
+    { id: 'people-bg',        section: 'background', label: 'Background Contacts', color: COLORS.bg },
+  ];
+  const DB_SECTIONS = [
+    { id:'act-aud', label:'Acting Auditions', color: COLORS.actAud, count: () => auditions('acting').length },
+    { id:'act-book', label:'Acting Bookings', color: COLORS.actBook, count: () => bookings('acting').length },
+    { id:'vo-aud', label:'Voiceover Auditions', color: COLORS.voAud, count: () => auditions('voiceover').length },
+    { id:'vo-book', label:'Voiceover Bookings', color: COLORS.voBook, count: () => bookings('voiceover').length },
+    { id:'mod-book', label:'Modeling Bookings', color: COLORS.modBook, count: () => bookings('modeling').length },
+    { id:'bg', label:'Background Jobs', color: COLORS.bg, count: () => bgList().length },
+    { id:'callbacks', label:'Callbacks', color: COLORS.callback, count: () => allCallbacks().length },
+    { id:'cds', label:'Casting Directors', color: '#26313B', count: () => cdList().length },
+    ...PEOPLE_GROUPS.map(g => ({ id: g.id, label: g.label, color: g.color, count: () => peopleList(g.section).length })),
+    { id:'year', label:'Year at a Glance', color: '#5C6870', count: () => null },
+  ];
+  function renderDbHome() {
+    document.getElementById('db-grid').innerHTML = DB_SECTIONS.map(s => {
+      const c = s.count();
+      return `<button class="db-btn" style="border-color:${s.color};color:${s.color}" onclick="showDb('${s.id}')">
+        ${s.label}${c === null ? '' : `<span class="db-count">${c} record${c===1?'':'s'}</span>`}</button>`;
+    }).join('');
+  }
+  let dbSection = null, dbSearch = '';
+  function showDb(id) {
+    dbSection = id; dbSearch = '';
+    document.getElementById('db-home').style.display = 'none';
+    document.getElementById('db-detail').style.display = '';
+    renderDbDetail();
+    window.scrollTo(0,0);
+  }
+  function dbBack() {
+    dbSection = null;
+    document.getElementById('db-home').style.display = '';
+    document.getElementById('db-detail').style.display = 'none';
+    renderDbHome();
+  }
+
+  function searchBoxHTML() {
+    return `<input type="text" class="search-box" id="db-search" placeholder="Search" value="${esc(dbSearch)}"
+      oninput="dbSearch=this.value;renderDbDetail(true)" />`;
+  }
+  function exportBarHTML() {
+    return `<div class="export-row" style="margin:0 0 16px">
+      <button class="btn-small" onclick="exportDbPdf()">Export This Page as a PDF</button></div>`;
+  }
+  function matches(e, fields) {
+    if (!dbSearch.trim()) return true;
+    const q = dbSearch.trim().toLowerCase();
+    return fields.some(f => String(e[f]||'').toLowerCase().includes(q));
+  }
+
+  function renderDbDetail(keepFocus) {
+    const el = document.getElementById('db-content');
+    const sec = dbSection;
+    let html = '';
+    // Every category that holds records gets its own PDF button.
+    const canExport = !!dbExportPlan(sec);
+    const SEC_MAP = { 'act': 'acting', 'vo': 'voiceover', 'mod': 'modeling' };
+    if (sec === 'act-aud' || sec === 'vo-aud') {
+      const section = SEC_MAP[sec.split('-')[0]];
+      const list = auditions(section).sort(byDateDesc).filter(e => matches(e, ['project','cd','role','union','photographer','dp','notes']));
+      html = `<div class="db-head">${SECTION_LABEL[section]} Auditions</div>
+        <div class="db-sub">${auditions(section).length} in ${viewYearLabel()}. Tap a card to open it.</div>` + searchBoxHTML() +
+        (list.length ? list.map(e => audRowHTML(section, e)).join('')
+          : `<div class="empty-state">Nothing here yet.</div>`);
+    } else if (sec === 'act-book' || sec === 'vo-book' || sec === 'mod-book') {
+      const section = SEC_MAP[sec.split('-')[0]];
+      const list = bookings(section).sort((a,b) => (b.bookedDate||b.date||'').localeCompare(a.bookedDate||a.date||''))
+        .filter(e => matches(e, ['project','cd','role','union','photographer','dp','notes']));
+      const total = bookings(section).reduce((s,e) => s + (e.bookedPay||0), 0);
+      html = `<div class="db-head">${SECTION_LABEL[section]} Bookings</div>
+        <div class="db-sub">${bookings(section).length} booked, ${fmtMoney(total)} in ${viewYearLabel()}.</div>` + searchBoxHTML() +
+        (list.length ? list.map(e => audRowHTML(section, e, true)).join('')
+          : `<div class="empty-state">No bookings yet. They are coming.</div>`);
+    } else if (sec === 'bg') {
+      const all = bgList();
+      const list = [...all].sort(byDateDesc).filter(e => matches(e, ['project','type','company','site','union','photographer','dp','notes']));
+      const total = all.reduce((s,e) => s + (e.pay||0), 0);
+      html = `<div class="db-head">Background Jobs</div>
+        <div class="db-sub">${all.length} jobs, ${fmtMoney(total)} in ${viewYearLabel()}.</div>` + searchBoxHTML() +
+        (list.length ? list.map(e => `
+          <div class="row-card" onclick="openBgForm('${e.id}')">
+            ${rowDateHTML(e.date)}
+            <div class="row-main"><div class="row-title">${esc(e.project||'(no name)')}</div>
+              <div class="row-sub">${esc([e.type, e.company, e.site, e.union].filter(Boolean).join(' · '))}</div></div>
+            <div class="row-right"><span class="chip chip-money">${fmtMoney(e.pay)}</span></div>
+          </div>`).join('') : `<div class="empty-state">No background jobs logged yet.</div>`);
+    } else if (sec === 'callbacks') {
+      const all = allCallbacks().sort(byDateDesc);
+      const list = all.filter(e => matches(e, ['project','cd','role','union','photographer','dp','notes']));
+      html = `<div class="db-head">Callbacks</div>
+        <div class="db-sub">${all.length} in ${viewYearLabel()}. Every audition that brought you back.</div>` + searchBoxHTML() +
+        (list.length ? list.map(e => audRowHTML(e._sec, e)).join('')
+          : `<div class="empty-state">No callbacks logged yet. They are coming.</div>`);
+    } else if (sec === 'cds') {
+      html = cdListHTML();
+    } else if (PEOPLE_GROUPS.some(g => g.id === sec)) {
+      html = peopleHTML(PEOPLE_GROUPS.find(g => g.id === sec));
+    } else if (sec === 'year') {
+      html = yearHTML();
+    }
+    el.innerHTML = (canExport ? exportBarHTML() : '') + html;
+    if (keepFocus) {
+      const sb = document.getElementById('db-search');
+      if (sb) { sb.focus(); sb.setSelectionRange(sb.value.length, sb.value.length); }
+    }
+  }
+
+  function rowDateHTML(date) {
+    if (!date) return `<div class="row-date"><div class="d-day">?</div><div class="d-mon"></div></div>`;
+    const [y,m,d] = date.split('-');
+    const mon = new Date(+y, +m-1, +d).toLocaleDateString('en-US',{month:'short'});
+    return `<div class="row-date"><div class="d-day">${+d}</div><div class="d-mon">${mon} ${y}</div></div>`;
+  }
+  function audRowHTML(section, e, bookedView) {
+    const stCls = e.status === 'booked' ? 'st-booked' : e.status === 'callback' ? 'st-callback' : 'st-auditioned';
+    const stLbl = e.status === 'booked' ? 'BOOKED' : e.status === 'callback' ? 'Callback' : 'Auditioned';
+    const date = bookedView ? (e.bookedDate || e.date) : e.date;
+    return `
+      <div class="row-card" onclick="openAudForm('${section}','${e.id}')">
+        ${rowDateHTML(date)}
+        <div class="row-main"><div class="row-title">${esc(e.project||'(no name)')}</div>
+          <div class="row-sub">${esc([e.direct ? 'Direct invitation — no audition' : '', e.role ? e.role.split('\n')[0] : '', e.union||'', e.cd ? 'CD: '+e.cd : ''].filter(Boolean).join(' · '))}</div></div>
+        <div class="row-right">
+          <span class="chip ${stCls}">${stLbl}</span>
+          ${bookedView && e.bookedPay ? `<span class="chip chip-money">${fmtMoney(e.bookedPay)}</span>` : ''}
+        </div>
+      </div>`;
+  }
+
+  // ============ CASTING DIRECTORS ============
+  function cdList() {
+    const map = {};
+    [...store.acting, ...store.voiceover, ...store.modeling].forEach(e => {
+      const k = cdKey(e.cd);
+      if (!k) return;
+      if (!map[k]) map[k] = { key: k, name: e.cd.trim(), seen: 0, callbacks: 0, booked: 0, last: '', phone: '', email: '' };
+      const c = map[k];
+      if (isRealAudition(e)) c.seen++;
+      if (isRealAudition(e) && hasCallback(e)) c.callbacks++;
+      if (e.status === 'booked') c.booked++;
+      if ((e.date||'') > c.last) c.last = e.date;
+      if (e.cdPhone) c.phone = e.cdPhone;
+      if (e.cdEmail) c.email = e.cdEmail;
+    });
+    return Object.values(map).sort((a,b) => b.seen - a.seen || (b.last||'').localeCompare(a.last||''));
+  }
+  function cdListHTML() {
+    const cds = cdList();
+    if (cds.length === 0) return `<div class="db-head">Casting Directors</div>
+      <div class="empty-state"><b>No casting directors yet.</b><br>Put the casting director's name on your audition cards and your promotion list builds itself.</div>`;
+    return `<div class="db-head">Casting Directors</div>
+      <div class="db-sub">From acting, voiceover, and modeling — never background. These are the offices that know you. Your promotion list.</div>` +
+      cds.map(c => {
+        const info = store.cdInfo[c.key] || {};
+        return `
+        <div class="cd-card">
+          <div class="cd-top">
+            <div class="cd-name">${esc(c.name)}</div>
+            <div class="cd-last">${c.last ? 'Last saw you: ' + fmtDate(c.last) : ''}</div>
+          </div>
+          <div class="cd-stats">
+            <div class="cd-stat"><b>${c.seen}</b> time${c.seen===1?'':'s'} called in</div>
+            <div class="cd-stat"><b>${c.callbacks}</b> callback${c.callbacks===1?'':'s'}</div>
+            <div class="cd-stat booked"><b>${c.booked}</b> booked</div>
+          </div>
+          <div class="cd-field"><label>Phone</label>
+            <input type="tel" class="cd-input" value="${esc(info.phone || c.phone || '')}"
+              onchange="saveCdField('${esc(c.key)}','phone',this.value)" placeholder="Their phone number" /></div>
+          <div class="cd-field"><label>Email or Website</label>
+            <input type="text" class="cd-input" value="${esc(info.contact || c.email || '')}"
+              onchange="saveCdField('${esc(c.key)}','contact',this.value)" placeholder="Email or website" /></div>
+          <div class="cd-field"><label>Notes</label>
+            <textarea class="cd-input" onchange="saveCdField('${esc(c.key)}','notes',this.value)"
+              placeholder="What they like, who the associate is...">${esc(info.notes||'')}</textarea></div>
+        </div>`;
+      }).join('');
+  }
+  // ============ MY CONTACTS — the database ============
+  // Every person named on any record, with their role, gathered into one list.
+  const PEOPLE_ROLES = [
+    { name: 'cd',           email: 'cdEmail',           role: 'Casting Director' },
+    { name: 'director',     email: 'directorEmail',     role: 'Director' },
+    { name: 'photographer', email: 'photographerEmail', role: 'Photographer' },
+    { name: 'dp',           email: 'dpEmail',           role: 'Director of Photography' },
+    { name: 'producer',     email: 'producerEmail',     role: 'Producer' },
+    { name: 'company',      email: 'companyEmail',      role: 'Hired You' },
+    { name: 'cdCompany',    email: 'cdEmail',           role: 'Casting Company' },
+  ];
+  function peopleList(only) {
+    const map = {};
+    (only ? [only] : ['acting','voiceover','modeling','background']).forEach(sec => {
+      (store[sec]||[]).forEach(e => {
+        PEOPLE_ROLES.forEach(f => {
+          const nm = (e[f.name]||'').trim();
+          if (!nm) return;
+          const k = cdKey(nm);
+          if (!map[k]) map[k] = { key: k, name: nm, roles: [], email: '', jobs: 0, last: '', projects: [] };
+          const c = map[k];
+          if (!c.roles.includes(f.role)) c.roles.push(f.role);
+          if (e[f.email]) c.email = e[f.email];
+          c.jobs++;
+          const d = e.bookedDate || e.date || '';
+          if (d > c.last) c.last = d;
+          if (e.project && !c.projects.includes(e.project)) c.projects.push(e.project);
+        });
+      });
+    });
+    return Object.values(map).sort((a,b) => a.name.localeCompare(b.name));
+  }
+  function peopleHTML(group) {
+    const people = peopleList(group.section);
+    if (people.length === 0) return `<div class="db-head">${group.label}</div>
+      <div class="empty-state"><b>No contacts yet.</b><br>Every casting director, director, photographer, DP and producer you name on a ${group.label.replace(' Contacts','').toLowerCase()} record lands here with their email. This is the list you will still want in ten years.</div>`;
+    return `<div class="db-head">${group.label}</div>
+      <div class="db-sub">${people.length} ${people.length===1?'person':'people'} from your ${group.label.replace(' Contacts','').toLowerCase()} records only. Add an email or phone here and it stays.</div>
+      <div style="margin-bottom:14px"><button class="btn-small" onclick="exportContacts('${group.section}','${group.label}')">${group.label} (CSV)</button></div>` +
+      searchBoxHTML() +
+      people.filter(c => !dbSearch || (c.name + ' ' + c.roles.join(' ') + ' ' + (c.email||'') + ' ' + c.projects.join(' ')).toLowerCase().includes(dbSearch.toLowerCase()))
+      .map(c => {
+        const info = store.peopleInfo[c.key] || {};
+        return `
+        <div class="cd-card">
+          <div class="cd-top">
+            <div class="cd-name">${esc(c.name)}</div>
+            <div class="cd-last">${c.last ? 'Last worked: ' + fmtDate(c.last) : ''}</div>
+          </div>
+          <div class="cd-stats">
+            <div class="cd-stat"><b>${esc(c.roles.join(', '))}</b></div>
+            <div class="cd-stat"><b>${c.jobs}</b> job${c.jobs===1?'':'s'} together</div>
+          </div>
+          <div class="cd-field"><label>Email</label>
+            <input type="email" class="cd-input" value="${esc(info.email || c.email || '')}"
+              onchange="savePersonField('${esc(c.key)}','email',this.value)" placeholder="Their email address" /></div>
+          <div class="cd-field"><label>Phone</label>
+            <input type="tel" class="cd-input" value="${esc(info.phone || '')}"
+              onchange="savePersonField('${esc(c.key)}','phone',this.value)" placeholder="Their phone number" /></div>
+          <div class="cd-field"><label>Notes</label>
+            <textarea class="cd-input" onchange="savePersonField('${esc(c.key)}','notes',this.value)"
+              placeholder="How you met, what they shoot, who they work for...">${esc(info.notes||'')}</textarea></div>
+        </div>`;
+      }).join('');
+  }
+  function savePersonField(key, field, value) {
+    (store.peopleInfo[key] = store.peopleInfo[key] || {})[field] = value.trim();
+    if (saveStore()) showToast('Saved');
+  }
+  function exportContacts(section, label) {
+    const people = peopleList(section);
+    if (!people.length) { alert('No contacts yet. Put names on your records and they gather here.'); return; }
+    const rows = [['NAME','ROLES','EMAIL','PHONE','JOBS TOGETHER','LAST WORKED','PROJECTS','NOTES']];
+    people.forEach(c => {
+      const info = store.peopleInfo[c.key] || {};
+      rows.push([c.name, c.roles.join(' / '), info.email || c.email || '', info.phone || '',
+                 c.jobs, c.last || '', c.projects.join(' | '), info.notes || '']);
+    });
+    const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+    const blob = new Blob(['\ufeff' + rows.map(r => r.map(q).join(',')).join('\n')], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (label || 'my-contacts').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.csv';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+
+  function saveCdField(key, field, value) {
+    (store.cdInfo[key] = store.cdInfo[key] || {})[field] = value.trim();
+    if (saveStore()) showToast('Saved');
+  }
+
+  // ============ YEAR AT A GLANCE ============
+  let glanceYear = String(new Date().getFullYear());
+  function yearHTML() { return withYear(glanceYear, yearHTMLInner); }
+  function yearHTMLInner() {
+    const years = yearsWithData().slice().reverse();
+    const y = glanceYear;
+    const inY = d => (d||'').startsWith(y);
+    const actAud = auditions('acting').filter(e => inY(e.date)).length;
+    const actBook = bookings('acting').filter(e => inY(e.bookedDate || e.date));
+    const voAud = auditions('voiceover').filter(e => inY(e.date)).length;
+    const voBook = bookings('voiceover').filter(e => inY(e.bookedDate || e.date));
+    const modBook = bookings('modeling').filter(e => inY(e.bookedDate || e.date));
+    const bgJobs = bgList();
+    const allAudY = [...auditions('acting'), ...auditions('voiceover')].filter(e => inY(e.date));
+    const cbY = allCallbacks().filter(e => inY(e.date)).length;
+    const agency = allAudY.filter(fromAgency).length;
+    const myself = allAudY.length - agency;
+    const actMoney = actBook.reduce((s,e) => s + (e.bookedPay||0), 0);
+    const voMoney = voBook.reduce((s,e) => s + (e.bookedPay||0), 0);
+    const modMoney = modBook.reduce((s,e) => s + (e.bookedPay||0), 0);
+    const bgMoney = bgJobs.reduce((s,e) => s + (e.pay||0), 0);
+    const entertainment = actMoney + voMoney + modMoney + bgMoney;
+    return `<div class="db-head">Year at a Glance</div>
+      <div class="year-chips">${years.map(yy =>
+        `<button class="mode-chip ${yy===y?'active':''}" onclick="glanceYear='${yy}';renderDbDetail()">${yy}</button>`).join('')}</div>
+      <div class="summary-card"><span>Acting auditions</span><b style="color:${COLORS.actAud}">${actAud}</b></div>
+      <div class="summary-card"><span>Acting jobs booked</span><b style="color:${COLORS.actBook}">${actBook.length}</b></div>
+      <div class="summary-card"><span>Voiceover auditions</span><b style="color:${COLORS.voAud}">${voAud}</b></div>
+      <div class="summary-card"><span>Voiceover jobs booked</span><b style="color:${COLORS.voBook}">${voBook.length}</b></div>
+      <div class="summary-card"><span>Modeling jobs booked</span><b style="color:${COLORS.modBook}">${modBook.length}</b></div>
+      <div class="summary-card"><span>Background Jobs</span><b style="color:${COLORS.bg}">${bgJobs.length}</b></div>
+      <div class="summary-card"><span>Callbacks</span><b style="color:${COLORS.callback}">${cbY}</b></div>
+      <div class="summary-card"><span>My Agency vs. Myself</span><b style="color:${COLORS.agency}">${agency} vs ${myself}</b></div>
+      <div class="summary-card"><span>Acting money</span><b style="color:${COLORS.actBook}">${fmtMoney(actMoney)}</b></div>
+      <div class="summary-card"><span>Voiceover money</span><b style="color:${COLORS.voBook}">${fmtMoney(voMoney)}</b></div>
+      <div class="summary-card"><span>Modeling money</span><b style="color:${COLORS.modBook}">${fmtMoney(modMoney)}</b></div>
+      <div class="summary-card"><span>Background money</span><b style="color:${COLORS.bg}">${fmtMoney(bgMoney)}</b></div>
+      <div class="summary-card ent"><span><b>ENTERTAINMENT TOTAL</b></span><b style="color:${COLORS.actAud}">${fmtMoney(entertainment)}</b></div>`;
+  }
+
+  // ============ AUDITION FORM (acting + voiceover) ============
+  let audSection = 'acting', audEditingId = null;
+  const audPicked = { type: null, union: null, format: null, source: null, platform: null, status: 'auditioned' };
+
+  function buildChips(containerId, options, group, allowNone, onPick) {
+    const el = document.getElementById(containerId);
+    el.innerHTML = '';
+    options.forEach(opt => {
+      const isObj = typeof opt === 'object';
+      const val = isObj ? opt.id : opt;
+      const label = isObj ? opt.label : opt;
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'pick';
+      b.textContent = label;
+      b.dataset.val = val;
+      b.onclick = () => {
+        if (audPicked[group] === val && allowNone) audPicked[group] = null;
+        else audPicked[group] = val;
+        refreshChips(containerId, group);
+        if (onPick) onPick();
+      };
+      el.appendChild(b);
+    });
+    refreshChips(containerId, group);
+  }
+  function refreshChips(containerId, group) {
+    document.querySelectorAll('#'+containerId+' .pick').forEach(b =>
+      b.classList.toggle('on', b.dataset.val === audPicked[group]));
+  }
+  function updatePlatformOther(inputId) {
+    document.getElementById(inputId).style.display = audPicked.platform === 'Other' ? '' : 'none';
+  }
+  function updateSourceOther(inputId) {
+    document.getElementById(inputId).style.display = audPicked.source === 'Other' ? '' : 'none';
+  }
+
+  function openAudForm(section, id) {
+    audSection = section;
+    audEditingId = id || null;
+    const e = id ? store[section].find(x => x.id === id) : null;
+    document.getElementById('aud-title').textContent =
+      (e && e.direct) ? SECTION_LABEL[section] + ' Direct Invitation'
+                      : (e ? '' : 'New ') + SECTION_LABEL[section] + ' Audition';
+    document.getElementById('aud-delete').style.display = e ? '' : 'none';
+    document.getElementById('fld-type').style.display = '';
+    // Photographers belong to modeling work only.
+    const photoShown = section === 'modeling';
+    document.getElementById('fld-photographer').style.display = photoShown ? '' : 'none';
+    document.getElementById('fld-dp').style.display = photoShown ? '' : 'none';
+
+    document.getElementById('f-date').value = e ? e.date : todayISO();
+    document.getElementById('f-project').value = e ? e.project : '';
+    document.getElementById('f-role').value = e ? (e.role||'') : '';
+    document.getElementById('f-where').value = e ? (e.where||'') : '';
+    document.getElementById('f-cd').value = e ? (e.cd||'') : '';
+    document.getElementById('f-cdemail').value = e ? (e.cdEmail||'') : '';
+    document.getElementById('f-cdcompany').value = e ? (e.cdCompany||'') : '';
+    document.getElementById('f-director').value = e ? (e.director||'') : '';
+    document.getElementById('f-directoremail').value = e ? (e.directorEmail||'') : '';
+    document.getElementById('f-producer').value = e ? (e.producer||'') : '';
+    document.getElementById('f-produceremail').value = e ? (e.producerEmail||'') : '';
+    document.getElementById('f-photographer').value = e ? (e.photographer||'') : '';
+    document.getElementById('f-photographeremail').value = e ? (e.photographerEmail||'') : '';
+    document.getElementById('f-dp').value = e ? (e.dp||'') : '';
+    document.getElementById('f-dpemail').value = e ? (e.dpEmail||'') : '';
+    document.getElementById('f-tapelink').value = e ? (e.tapeLink||'') : '';
+    document.getElementById('f-notes').value = e ? (e.notes||'') : '';
+
+    audPicked.type = e ? (e.type||null) : null;
+    audPicked.union = e ? (e.union||null) : null;
+    audPicked.format = e ? (e.format||null) : null;
+    audPicked.status = e ? e.status : 'auditioned';
+    audPicked.source = e && e.source ? e.source : null;
+    const where = e ? (e.platform||'') : '';
+    const knownWhere = where && WHERE_FROM.includes(where);
+    audPicked.platform = where ? (knownWhere ? where : 'Other') : null;
+    document.getElementById('f-platform-other').value = where && !knownWhere ? where : '';
+
+    buildChips('f-type', section === 'voiceover' ? VO_TYPES : section === 'modeling' ? MOD_TYPES : ACT_TYPES, 'type', true);
+    buildChips('f-union', UNIONS, 'union', true);
+    buildChips('f-format', FORMATS, 'format', true);
+    buildChips('f-source', SOURCES, 'source', true);
+    buildChips('f-platform', WHERE_FROM, 'platform', true, () => updatePlatformOther('f-platform-other'));
+    buildChips('f-status', STATUSES, 'status', false);
+    updatePlatformOther('f-platform-other');
+
+    // Booked box
+    const booked = e && e.status === 'booked';
+    document.getElementById('aud-booked-box').style.display = booked ? '' : 'none';
+    document.getElementById('fld-status').style.display = booked ? 'none' : '';
+    if (booked) {
+      document.getElementById('f-bookdate').value = e.bookedDate || '';
+      document.getElementById('f-bookpay').value = e.bookedPay || '';
+      document.getElementById('f-booknotes').value = e.bookedNotes || '';
+      document.getElementById('f-docs').value = e.docs || '';
+      renderDocButtons('f-docs-open', e.docs);
+    }
+
+    // CD autocomplete from acting + voiceover
+    const names = [...new Set([...store.acting, ...store.voiceover, ...store.modeling].map(x => (x.cd||'').trim()).filter(Boolean))].sort();
+    document.getElementById('cd-datalist').innerHTML = names.map(n => `<option value="${esc(n)}">`).join('');
+
+    openOverlay('ov-aud');
+  }
+
+  // "Where It Came From", with whatever was typed under Other.
+  function whereAnswer(otherId) {
+    if (audPicked.platform === 'Other') return document.getElementById(otherId).value.trim() || 'Other';
+    return audPicked.platform || '';
+  }
+  function saveAud() {
+    const project = document.getElementById('f-project').value.trim();
+    const date = document.getElementById('f-date').value;
+    if (!project) { alert('Please give the project a name.'); return; }
+    if (!date) { alert('Please pick the date.'); return; }
+    const existing = audEditingId ? store[audSection].find(x => x.id === audEditingId) : null;
+    const booked = existing && existing.status === 'booked';
+    const entry = {
+      id: audEditingId || newId(),
+      date, project,
+      type: audPicked.type||'',
+      union: audPicked.union||'',
+      role: document.getElementById('f-role').value.trim(),
+      format: audPicked.format||'',
+      where: document.getElementById('f-where').value.trim(),
+      cd: document.getElementById('f-cd').value.trim(),
+      cdEmail: document.getElementById('f-cdemail').value.trim(),
+      cdPhone: (existing && existing.cdPhone) || '',
+      cdCompany: document.getElementById('f-cdcompany').value.trim(),
+      director: document.getElementById('f-director').value.trim(),
+      directorEmail: document.getElementById('f-directoremail').value.trim(),
+      producer: document.getElementById('f-producer').value.trim(),
+      producerEmail: document.getElementById('f-produceremail').value.trim(),
+      photographer: audSection === 'modeling' ? document.getElementById('f-photographer').value.trim() : ((existing && existing.photographer) || ''),
+      photographerEmail: audSection === 'modeling' ? document.getElementById('f-photographeremail').value.trim() : ((existing && existing.photographerEmail) || ''),
+      dp: audSection === 'modeling' ? document.getElementById('f-dp').value.trim() : ((existing && existing.dp) || ''),
+      dpEmail: audSection === 'modeling' ? document.getElementById('f-dpemail').value.trim() : ((existing && existing.dpEmail) || ''),
+      tapeLink: document.getElementById('f-tapelink').value.trim(),
+      source: audPicked.source||'',
+      platform: whereAnswer('f-platform-other'),
+      notes: document.getElementById('f-notes').value.trim(),
+      status: booked ? 'booked' : (audPicked.status || 'auditioned'),
+      hadCallback: (existing && existing.hadCallback) || audPicked.status === 'callback' || (existing && existing.status === 'callback'),
+      direct: existing ? !!existing.direct : false,
+      bookedDate: booked ? document.getElementById('f-bookdate').value : '',
+      bookedPay: booked ? (parseFloat(document.getElementById('f-bookpay').value) || 0) : 0,
+      bookedNotes: booked ? document.getElementById('f-booknotes').value.trim() : '',
+      docs: booked ? document.getElementById('f-docs').value.trim() : (existing ? (existing.docs||'') : ''),
+    };
+    if (existing) {
+      const i = store[audSection].findIndex(x => x.id === audEditingId);
+      store[audSection][i] = entry;
+    } else {
+      store[audSection].push(entry);
+    }
+    // Remember the CD's email in the directory too
+    if (entry.cd && entry.cdEmail) {
+      (store.cdInfo[cdKey(entry.cd)] = store.cdInfo[cdKey(entry.cd)] || {}).contact = entry.cdEmail;
+    }
+    if (!saveStore()) return;
+    closeOverlay('ov-aud');
+    refreshCurrent();
+    showToast(SECTION_LABEL[audSection] + (existing && existing.direct ? ' direct invitation saved' : ' audition saved'));
+  }
+  function deleteAud() {
+    if (!audEditingId) return;
+    if (!confirm('Delete this record? This cannot be undone.')) return;
+    store[audSection] = store[audSection].filter(x => x.id !== audEditingId);
+    if (!saveStore()) return;
+    closeOverlay('ov-aud'); refreshCurrent(); showToast('Deleted');
+  }
+  function removeBooking() {
+    if (!audEditingId) return;
+    if (!confirm('Remove the booking from this audition? The audition itself stays.')) return;
+    const e = store[audSection].find(x => x.id === audEditingId);
+    if (e && e.direct) { alert('This was a direct invitation. There was no audition to remove. Delete the record instead if it is wrong.'); return; }
+    if (e) { e.status = 'auditioned'; e.bookedDate = ''; e.bookedPay = 0; e.bookedNotes = ''; saveStore(); }
+    closeOverlay('ov-aud'); refreshCurrent(); showToast('Booking removed');
+  }
+
+  // ============ BACKGROUND FORM ============
+  let bgEditingId = null;
+  function openBgForm(id) {
+    bgEditingId = id || null;
+    const e = id ? store.background.find(x => x.id === id) : null;
+    document.getElementById('bg-title').textContent = e ? 'Background Job' : 'New Background Job';
+    document.getElementById('bg-delete').style.display = e ? '' : 'none';
+    document.getElementById('g-date').value = e ? e.date : todayISO();
+    document.getElementById('g-project').value = e ? e.project : '';
+    document.getElementById('g-company').value = e ? (e.company||'') : '';
+    document.getElementById('g-companyemail').value = e ? (e.companyEmail||'') : '';
+    document.getElementById('g-pay').value = e && e.pay ? e.pay : '';
+    document.getElementById('g-notes').value = e ? (e.notes||'') : '';
+    document.getElementById('g-cd').value = e ? (e.cd||'') : '';
+    document.getElementById('g-cdemail').value = e ? (e.cdEmail||'') : '';
+    document.getElementById('g-docs').value = e ? (e.docs||'') : '';
+    renderDocButtons('g-docs-open', e ? e.docs : '');
+    const known = e && e.site && BG_SITES.includes(e.site);
+    audPicked.platform = e && e.site ? (known ? e.site : 'Other') : null;
+    document.getElementById('g-site-other').value = e && e.site && !known ? e.site : '';
+    buildChips('g-site', BG_SITES, 'platform', true, () => {
+      document.getElementById('g-site-other').style.display = audPicked.platform === 'Other' ? '' : 'none';
+    });
+    document.getElementById('g-site-other').style.display = audPicked.platform === 'Other' ? '' : 'none';
+    audPicked.union = e ? (e.union||null) : null;
+    buildChips('g-union', UNIONS, 'union', true);
+    audPicked.type = e ? (e.type||null) : null;
+    buildChips('g-type', BG_TYPES, 'type', true);
+    openOverlay('ov-bg');
+  }
+  function saveBg() {
+    const e0 = bgEditingId ? store.background.find(x => x.id === bgEditingId) : null;
+    const project = document.getElementById('g-project').value.trim();
+    const date = document.getElementById('g-date').value;
+    if (!project) { alert('Please give the job a name.'); return; }
+    if (!date) { alert('Please pick the date.'); return; }
+    const entry = {
+      id: bgEditingId || newId(),
+      date, project,
+      type: audPicked.type||'',
+      company: document.getElementById('g-company').value.trim(),
+      companyEmail: document.getElementById('g-companyemail').value.trim(),
+      site: audPicked.platform === 'Other'
+        ? (document.getElementById('g-site-other').value.trim() || 'Other')
+        : (audPicked.platform||''),
+      union: audPicked.union||'',
+      photographer: (e0 && e0.photographer) || '',
+      photographerEmail: (e0 && e0.photographerEmail) || '',
+      dp: (e0 && e0.dp) || '',
+      dpEmail: (e0 && e0.dpEmail) || '',
+      cd: document.getElementById('g-cd').value.trim(),
+      cdEmail: document.getElementById('g-cdemail').value.trim(),
+      producer: (e0 && e0.producer) || '',
+      producerEmail: (e0 && e0.producerEmail) || '',
+      pay: parseFloat(document.getElementById('g-pay').value) || 0,
+      notes: document.getElementById('g-notes').value.trim(),
+      docs: document.getElementById('g-docs').value.trim(),
+    };
+    if (bgEditingId) {
+      const i = store.background.findIndex(x => x.id === bgEditingId);
+      if (i < 0) store.background.push(entry); else store.background[i] = entry;
+    } else store.background.push(entry);
+    if (!saveStore()) return;
+    closeOverlay('ov-bg'); refreshCurrent(); showToast('Background job saved');
+  }
+  function deleteBg() {
+    if (!bgEditingId) return;
+    if (!confirm('Delete this background job? This cannot be undone.')) return;
+    store.background = store.background.filter(x => x.id !== bgEditingId);
+    if (!saveStore()) return;
+    closeOverlay('ov-bg'); refreshCurrent(); showToast('Deleted');
+  }
+
+  // ============ I BOOKED FLOW ============
+  let bookSection = 'acting', bookTargetId = null;
+  function openHowBooked(section) {
+    bookSection = section;
+    closeOverlay('ov-bookwhich');
+    document.getElementById('howbooked-title').textContent =
+      'That ' + SECTION_LABEL[section].toLowerCase() + ' job — how did it come to you?';
+    openOverlay('ov-howbooked');
+  }
+  function howBookedPick(how) {
+    closeOverlay('ov-howbooked');
+    if (how === 'direct') openDirectBooking();
+    else openBookList(bookSection);
+  }
+
+  function openBookList(section) {
+    bookSection = section;
+    closeOverlay('ov-bookwhich');
+    closeOverlay('ov-howbooked');
+    document.getElementById('booklist-title').textContent =
+      'Which ' + SECTION_LABEL[section].toLowerCase() + ' audition did you book?';
+    document.getElementById('booklist-search').value = '';
+    renderBookList();
+    openOverlay('ov-booklist');
+  }
+  function renderBookList() {
+    const q = document.getElementById('booklist-search').value.trim().toLowerCase();
+    const el = document.getElementById('booklist-rows');
+    let list = store[bookSection].filter(e => e.status !== 'booked').sort(byDateDesc);
+    if (q) list = list.filter(e => (e.project||'').toLowerCase().includes(q) || (e.cd||'').toLowerCase().includes(q));
+    if (list.length === 0) {
+      el.innerHTML = `<div class="empty-state">No auditions logged for this one yet.<br>Use the button below to write what you remember.</div>`;
+      return;
+    }
+    el.innerHTML = list.map(e => `
+      <div class="row-card" onclick="openBooking('${e.id}')">
+        ${rowDateHTML(e.date)}
+        <div class="row-main"><div class="row-title">${esc(e.project||'(no name)')}</div>
+          <div class="row-sub">${esc(e.cd ? 'CD: '+e.cd : '')}</div></div>
+        <div class="row-right"><span class="chip st-booked">TAP TO BOOK</span></div>
+      </div>`).join('');
+  }
+  function openBooking(id) {
+    bookTargetId = id;
+    const e = store[bookSection].find(x => x.id === id);
+    if (!e) return;
+    closeOverlay('ov-booklist');
+    document.getElementById('booking-what').textContent = e.project + ' — ' + fmtDate(e.date);
+    document.getElementById('bk-date').value = todayISO();
+    document.getElementById('bk-pay').value = '';
+    document.getElementById('bk-notes').value = '';
+    document.getElementById('bk-docs').value = e.docs || '';
+    renderDocButtons('bk-docs-open', e.docs);
+    openOverlay('ov-booking');
+  }
+  function saveBooking() {
+    const e = store[bookSection].find(x => x.id === bookTargetId);
+    if (!e) return;
+    if (e.status === 'callback') e.hadCallback = true;
+    e.status = 'booked';
+    e.bookedDate = document.getElementById('bk-date').value || todayISO();
+    e.bookedPay = parseFloat(document.getElementById('bk-pay').value) || 0;
+    e.bookedNotes = document.getElementById('bk-notes').value.trim();
+    e.docs = document.getElementById('bk-docs').value.trim();
+    if (!saveStore()) return;
+    closeOverlay('ov-booking');
+    refreshCurrent();
+    showToast('BOOKED! Congratulations!');
+  }
+
+  // ============ DIRECT BOOKING (no audition) ============
+  let forgottenMode = false;
+  function openForgotten() {
+    forgottenMode = true;
+    openDirectBooking(true);
+  }
+  function openDirectBooking(forgotten) {
+    forgottenMode = !!forgotten;
+    closeOverlay('ov-booklist');
+    document.getElementById('direct-title').textContent = forgottenMode
+      ? 'I Auditioned — Write What You Remember'
+      : 'Direct Invitation — ' + SECTION_LABEL[bookSection];
+    const modelingDirect = !forgottenMode && bookSection === 'modeling';
+    document.getElementById('direct-sub').textContent = forgottenMode
+      ? 'The Audition You Forgot To Log'
+      : 'They Invited You Directly — There Was No Audition';
+    // Modeling work never comes from an audition, so the line says nothing there.
+    document.getElementById('direct-sub').style.display = modelingDirect ? 'none' : '';
+    const dPhoto = bookSection === 'modeling';
+    document.getElementById('d-fld-photographer').style.display = dPhoto ? '' : 'none';
+    document.getElementById('d-fld-dp').style.display = dPhoto ? '' : 'none';
+    document.getElementById('d-datelabel').textContent = forgottenMode ? 'Audition Date' : 'Date Booked';
+    document.getElementById('direct-hint').textContent = forgottenMode
+      ? 'You did audition for this one, you just never logged it. Put in whatever you remember — even only the project name and the date is enough to keep the record.'
+      : '';
+    document.getElementById('d-date').value = todayISO();
+    document.getElementById('d-project').value = '';
+    document.getElementById('d-pay').value = '';
+    document.getElementById('d-cd').value = '';
+    document.getElementById('d-cdemail').value = '';
+    document.getElementById('d-cdcompany').value = '';
+    document.getElementById('d-photographer').value = '';
+    document.getElementById('d-photographeremail').value = '';
+    document.getElementById('d-dp').value = '';
+    document.getElementById('d-dpemail').value = '';
+    document.getElementById('d-producer').value = '';
+    document.getElementById('d-produceremail').value = '';
+    document.getElementById('d-notes').value = '';
+    document.getElementById('d-docs').value = '';
+    renderDocButtons('d-docs-open', '');
+    audPicked.union = null;
+    audPicked.type = null;
+    audPicked.source = null;
+    buildChips('d-union', UNIONS, 'union', true);
+    buildChips('d-type', bookSection === 'voiceover' ? VO_TYPES : bookSection === 'modeling' ? MOD_TYPES : ACT_TYPES, 'type', true);
+    audPicked.platform = null;
+    document.getElementById('d-platform-other').value = '';
+    buildChips('d-source', SOURCES, 'source', true);
+    buildChips('d-platform', WHERE_FROM, 'platform', true, () => updatePlatformOther('d-platform-other'));
+    updatePlatformOther('d-platform-other');
+    openOverlay('ov-direct');
+  }
+  function saveDirect() {
+    const project = document.getElementById('d-project').value.trim();
+    const date = document.getElementById('d-date').value;
+    if (!project) { alert('Please give the job a name.'); return; }
+    if (!date) { alert('Please pick the date.'); return; }
+    const entry = {
+      id: newId(),
+      date, project,
+      type: audPicked.type||'', union: audPicked.union||'', role: '', format: '', where: '',
+      cd: document.getElementById('d-cd').value.trim(),
+      cdPhone: '', cdEmail: document.getElementById('d-cdemail').value.trim(), director: '', tapeLink: '', source: audPicked.source||'',
+      cdCompany: document.getElementById('d-cdcompany').value.trim(),
+      photographer: bookSection === 'modeling' ? document.getElementById('d-photographer').value.trim() : '',
+      photographerEmail: bookSection === 'modeling' ? document.getElementById('d-photographeremail').value.trim() : '',
+      dp: bookSection === 'modeling' ? document.getElementById('d-dp').value.trim() : '',
+      dpEmail: bookSection === 'modeling' ? document.getElementById('d-dpemail').value.trim() : '',
+      producer: document.getElementById('d-producer').value.trim(),
+      producerEmail: document.getElementById('d-produceremail').value.trim(),
+      platform: whereAnswer('d-platform-other'),
+      notes: document.getElementById('d-notes').value.trim(),
+      status: 'booked', direct: !forgottenMode,
+      bookedDate: forgottenMode ? todayISO() : date,
+      bookedPay: parseFloat(document.getElementById('d-pay').value) || 0,
+      bookedNotes: '',
+      docs: document.getElementById('d-docs').value.trim(),
+    };
+    store[bookSection].push(entry);
+    if (!saveStore()) { store[bookSection] = store[bookSection].filter(x => x.id !== entry.id); return; }
+    closeOverlay('ov-direct');
+    refreshCurrent();
+    showToast('BOOKED! Congratulations!');
+  }
+
+  // ============ PDF ============
+  // A small PDF writer, built in by hand so the app stays one file with nothing
+  // to download. Helvetica and Helvetica-Bold are built into every PDF reader.
+  const PDF_WIDTHS = {
+    reg: ('278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,'
+        + '556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,'
+        + '667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,'
+        + '556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584').split(',').map(Number),
+    bold: ('278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,'
+         + '556,556,333,333,584,584,584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,'
+         + '667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,333,556,611,556,611,556,333,611,'
+         + '611,278,278,556,278,889,611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,584').split(',').map(Number),
+  };
+  // PDF readers here get plain ASCII, so smart quotes and dashes are folded down.
+  function pdfPlain(v) {
+    return String(v == null ? '' : v)
+      .replace(/[‘’‛]/g, "'").replace(/[“”]/g, '"')
+      .replace(/[–—]/g, '-').replace(/…/g, '...')
+      .replace(/[·•]/g, '-').replace(/ /g, ' ')
+      .replace(/\r\n?/g, '\n').replace(/[^\x20-\x7E\n]/g, '');
+  }
+  function pdfWidth(str, size, bold) {
+    const t = bold ? PDF_WIDTHS.bold : PDF_WIDTHS.reg;
+    let w = 0;
+    for (let i = 0; i < str.length; i++) {
+      const c = str.charCodeAt(i);
+      w += (c >= 32 && c <= 126) ? t[c-32] : 556;
+    }
+    return w * size / 1000;
+  }
+  function pdfWrap(text, size, bold, maxW) {
+    const out = [];
+    String(text).split('\n').forEach(para => {
+      const words = para.split(/\s+/).filter(Boolean);
+      if (!words.length) { out.push(''); return; }
+      let line = '';
+      words.forEach(w => {
+        const test = line ? line + ' ' + w : w;
+        if (pdfWidth(test, size, bold) <= maxW) { line = test; return; }
+        if (line) out.push(line);
+        // A single word longer than the line gets cut across lines.
+        let rest = w;
+        while (pdfWidth(rest, size, bold) > maxW && rest.length > 1) {
+          let cut = rest.length;
+          while (cut > 1 && pdfWidth(rest.slice(0, cut), size, bold) > maxW) cut--;
+          out.push(rest.slice(0, cut));
+          rest = rest.slice(cut);
+        }
+        line = rest;
+      });
+      if (line) out.push(line);
+    });
+    return out.length ? out : [''];
+  }
+  function pdfEsc(s) { return s.replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)'); }
+
+  // Big, plain and easy to read: that is the whole point of these pages.
+  const PDF_PAGE = { w: 612, h: 792, margin: 48 };
+  // Booked work prints in red, so one glance down the page shows what paid.
+  const PDF_RED = '0.72 0 0.11';
+  function makePdf(docTitle, blocks) {
+    const M = PDF_PAGE.margin, MAXW = PDF_PAGE.w - M*2;
+    const pages = [];
+    let cur = [], y = 0;
+    const newPage = () => { cur = []; pages.push(cur); y = PDF_PAGE.h - M; };
+    newPage();
+    const room = need => { if (y - need < M + 24) newPage(); };
+    const put = (text, size, bold, indent, red) => {
+      pdfWrap(pdfPlain(text), size, bold, MAXW - (indent||0)).forEach(ln => {
+        room(size * 1.45);
+        y -= size * 1.45;
+        if (!ln) return;
+        const draw = `BT /${bold ? 'F2' : 'F1'} ${size} Tf 1 0 0 1 ${M + (indent||0)} ${y.toFixed(1)} Tm (${pdfEsc(ln)}) Tj ET`;
+        cur.push(red ? `q ${PDF_RED} rg ${draw} Q` : draw);
+      });
+    };
+    blocks.forEach(b => {
+      if (b.t === 'title')   { room(44); y -= 8; put(b.text, 24, true); y -= 8; }
+      else if (b.t === 'sub')   { put(b.text, 13, false); y -= 6; }
+      else if (b.t === 'head')  { room(50); y -= 14; put(b.text, 17, true); y -= 2;
+                                  cur.push(`0.7 w ${M} ${(y-4).toFixed(1)} m ${PDF_PAGE.w-M} ${(y-4).toFixed(1)} l S`); y -= 10; }
+      else if (b.t === 'item')  { room(38); y -= 12; put(b.text, 15.5, true, 0, b.red); }
+      else if (b.t === 'line')  { put(b.text, 13.5, false, 16, b.red); }
+      else if (b.t === 'gap')   { y -= 8; }
+    });
+    // Objects: 1 catalog, 2 pages, 3 and 4 fonts, then page + content pairs.
+    const objs = [];
+    const kids = pages.map((_, i) => `${5 + i*2} 0 R`).join(' ');
+    objs[1] = '<< /Type /Catalog /Pages 2 0 R >>';
+    objs[2] = `<< /Type /Pages /Count ${pages.length} /Kids [${kids}] >>`;
+    objs[3] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>';
+    objs[4] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>';
+    pages.forEach((ops, i) => {
+      const pageNo = 5 + i*2, contNo = pageNo + 1;
+      const stream = ops.join('\n');
+      objs[pageNo] = `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${PDF_PAGE.w} ${PDF_PAGE.h}] `
+        + `/Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${contNo} 0 R >>`;
+      objs[contNo] = `<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`;
+    });
+    let out = '%PDF-1.4\n';
+    const offsets = [];
+    for (let i = 1; i < objs.length; i++) {
+      offsets[i] = out.length;
+      out += `${i} 0 obj\n${objs[i]}\nendobj\n`;
+    }
+    const xref = out.length;
+    out += `xref\n0 ${objs.length}\n0000000000 65535 f \n`;
+    for (let i = 1; i < objs.length; i++) out += String(offsets[i]).padStart(10, '0') + ' 00000 n \n';
+    out += `trailer\n<< /Size ${objs.length} /Root 1 0 R /Info << /Title (${pdfEsc(pdfPlain(docTitle))}) >> >>\n`
+         + `startxref\n${xref}\n%%EOF`;
+    const bytes = new Uint8Array(out.length);
+    for (let i = 0; i < out.length; i++) bytes[i] = out.charCodeAt(i) & 0xFF;
+    return new Blob([bytes], { type: 'application/pdf' });
+  }
+  function downloadPdf(filename, docTitle, blocks) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(makePdf(docTitle, blocks));
+    a.download = filename;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }
+
+  // ============ EXPORT ONE DATABASE CATEGORY AS A PDF ============
+  function pdfPerson(label, name, email) {
+    if (!name && !email) return null;
+    return label + ': ' + [name, email].filter(Boolean).join(' — ');
+  }
+  function pdfRecordLines(e, section) {
+    const L = [];
+    const add = (v, red) => { if (v) L.push({ text: v, red: !!red }); };
+    add(e.type ? 'Type: ' + e.type : '');
+    add(e.role ? 'Role: ' + e.role : '');
+    add(e.union ? 'Union: ' + e.union : '');
+    add(e.format ? 'How: ' + e.format : '');
+    add(e.where ? 'Where: ' + e.where : '');
+    if (e.status === 'booked' || e.bookedPay) {
+      add('BOOKED: ' + (e.bookedDate ? fmtDate(e.bookedDate) : 'yes')
+        + (e.bookedPay ? '  —  ' + fmtMoney(e.bookedPay) : ''), true);
+    } else if (e.status) add('Status: ' + (e.status === 'callback' ? 'Callback' : 'Auditioned'));
+    add(e.direct ? 'Direct invitation — there was no audition' : '');
+    add(e.source ? 'Who got you in: ' + e.source : '');
+    add(e.platform ? 'Where it came from: ' + e.platform : '');
+    add(pdfPerson('Casting Director', e.cd, e.cdEmail));
+    add(e.cdCompany ? 'Casting Company: ' + e.cdCompany : '');
+    add(pdfPerson('Director', e.director, e.directorEmail));
+    add(pdfPerson('Producer', e.producer, e.producerEmail));
+    add(pdfPerson('Photographer', e.photographer, e.photographerEmail));
+    add(pdfPerson('Director of Photography', e.dp, e.dpEmail));
+    add(pdfPerson('Who hired you', e.company, e.companyEmail));
+    add(e.site ? 'Came through: ' + e.site : '');
+    add(e.pay ? 'Money: ' + fmtMoney(e.pay) : '');
+    add(e.tapeLink ? 'Self-tape: ' + e.tapeLink : '');
+    add(e.notes ? 'Notes: ' + e.notes : '');
+    add(e.bookedNotes ? 'Booking notes: ' + e.bookedNotes : '');
+    add(e.docs ? 'Documents: ' + e.docs.replace(/\n/g, '; ') : '');
+    return L;
+  }
+  function pdfRecordBlocks(list, section, dateFn) {
+    const out = [];
+    list.forEach(e => {
+      const d = dateFn ? dateFn(e) : e.date;
+      const won = isBooked(e);
+      out.push({ t:'item', red: won,
+        text: (d ? fmtDate(d) + '  —  ' : '') + (e.project || '(no name)') + (won ? '   (BOOKED)' : '') });
+      pdfRecordLines(e, section).forEach(l => out.push({ t:'line', text: l.text, red: l.red }));
+    });
+    return out;
+  }
+  function pdfContactBlocks(section) {
+    const out = [];
+    peopleList(section).forEach(c => {
+      const info = store.peopleInfo[c.key] || {};
+      out.push({ t:'item', text: c.name });
+      if (c.roles.length) out.push({ t:'line', text: 'Role: ' + c.roles.join(', ') });
+      const email = info.email || c.email;
+      if (email) out.push({ t:'line', text: 'Email: ' + email });
+      if (info.phone) out.push({ t:'line', text: 'Phone: ' + info.phone });
+      out.push({ t:'line', text: c.jobs + ' job' + (c.jobs === 1 ? '' : 's') + ' together'
+        + (c.last ? '  —  last worked ' + fmtDate(c.last) : '') });
+      if (c.projects.length) out.push({ t:'line', text: 'Projects: ' + c.projects.join(', ') });
+      if (info.notes) out.push({ t:'line', text: 'Notes: ' + info.notes });
+    });
+    return out;
+  }
+  // What each DATABASE category puts in its PDF.
+  function dbExportPlan(sec) {
+    const SEC_MAP = { 'act': 'acting', 'vo': 'voiceover', 'mod': 'modeling' };
+    const money = list => list.reduce((s,e) => s + (e.bookedPay || e.pay || e.amount || 0), 0);
+    if (sec === 'act-aud' || sec === 'vo-aud') {
+      const section = SEC_MAP[sec.split('-')[0]];
+      const list = auditions(section).sort(byDateDesc);
+      return { title: SECTION_LABEL[section] + ' Auditions', file: sec + '-auditions',
+        sub: list.length + ' audition' + (list.length === 1 ? '' : 's') + ' in ' + viewYearLabel() + '.',
+        blocks: pdfRecordBlocks(list, section) };
+    }
+    if (sec === 'act-book' || sec === 'vo-book' || sec === 'mod-book') {
+      const section = SEC_MAP[sec.split('-')[0]];
+      const list = bookings(section).sort((a,b) => (b.bookedDate||b.date||'').localeCompare(a.bookedDate||a.date||''));
+      return { title: SECTION_LABEL[section] + ' Bookings', file: sec + '-bookings',
+        sub: list.length + ' booked, ' + fmtMoney(money(list)) + ' in ' + viewYearLabel() + '.',
+        blocks: pdfRecordBlocks(list, section, e => e.bookedDate || e.date) };
+    }
+    if (sec === 'bg') {
+      const list = [...bgList()].sort(byDateDesc);
+      return { title: 'Background Jobs', file: 'background-jobs',
+        sub: list.length + ' job' + (list.length === 1 ? '' : 's') + ', ' + fmtMoney(money(list)) + ' in ' + viewYearLabel() + '.',
+        blocks: pdfRecordBlocks(list, 'background') };
+    }
+    if (sec === 'callbacks') {
+      const list = allCallbacks().sort(byDateDesc);
+      return { title: 'Callbacks', file: 'callbacks',
+        sub: list.length + ' in ' + viewYearLabel() + '. Every audition that brought you back.',
+        blocks: list.flatMap(e => [{ t:'item', red: isBooked(e),
+            text: (e.date ? fmtDate(e.date) + '  —  ' : '') + (e.project || '(no name)')
+            + '   [' + SECTION_LABEL[e._sec] + ']' + (isBooked(e) ? '   (BOOKED)' : '') },
+          ...pdfRecordLines(e, e._sec).map(l => ({ t:'line', text: l.text, red: l.red }))]) };
+    }
+    if (sec === 'cds') {
+      const list = cdList();
+      return { title: 'Casting Directors', file: 'casting-directors',
+        sub: list.length + ' casting director' + (list.length === 1 ? '' : 's') + ' who have called you in.',
+        blocks: list.flatMap(c => {
+          const info = store.cdInfo[c.key] || {};
+          const rows = [{ t:'item', text: c.name }];
+          const mail = info.contact || c.email, tel = info.phone || c.phone;
+          if (mail) rows.push({ t:'line', text: 'Email: ' + mail });
+          if (tel) rows.push({ t:'line', text: 'Phone: ' + tel });
+          rows.push({ t:'line', text: c.seen + ' audition' + (c.seen === 1 ? '' : 's')
+            + ', ' + c.callbacks + ' callback' + (c.callbacks === 1 ? '' : 's')
+            + ', ' + c.booked + ' booked'
+            + (c.last ? '  —  last seen ' + fmtDate(c.last) : '') });
+          if (info.notes) rows.push({ t:'line', text: 'Notes: ' + info.notes });
+          return rows;
+        }) };
+    }
+    const grp = PEOPLE_GROUPS.find(g => g.id === sec);
+    if (grp) {
+      const n = peopleList(grp.section).length;
+      return { title: grp.label, file: grp.label.toLowerCase().replace(/[^a-z]+/g, '-'),
+        sub: n + ' ' + (n === 1 ? 'person' : 'people') + ' from your '
+          + grp.label.replace(' Contacts','').toLowerCase() + ' records.',
+        blocks: pdfContactBlocks(grp.section) };
+    }
+    return null;
+  }
+  function exportDbPdf() {
+    const plan = dbExportPlan(dbSection);
+    if (!plan) { alert('This page has nothing to export yet.'); return; }
+    if (!plan.blocks.length) { alert('Nothing here yet, so there is nothing to put in the file.'); return; }
+    const today = new Date().toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+    const blocks = [
+      { t:'title', text: 'IArtist — ' + plan.title },
+      { t:'sub', text: plan.sub },
+      { t:'sub', text: 'Printed ' + today },
+      { t:'head', text: plan.title },
+      ...plan.blocks,
+      { t:'gap' },
+      { t:'sub', text: 'Created by Carlos Flores, actor and photographer — karloz.art' },
+    ];
+    downloadPdf('iartist-' + plan.file + '.pdf', plan.title, blocks);
+    showToast('PDF sent to your Downloads folder');
+  }
+
+  // ============ EXPORTS ============
+  function exportBookingsSheet() { withYear(ALL_YEARS, exportBookingsSheetInner); }
+  function exportBookingsSheetInner() {
+    const rows = [['DATE BOOKED','AUDITION DATE','WHAT','PROJECT','TYPE','UNION','ROLE','PAY','DIRECTOR','PHOTOGRAPHER','DP','CASTING DIRECTOR','WHO GOT YOU IN','WHERE IT CAME FROM','NOTES']];
+    ['acting','voiceover','modeling'].forEach(section => {
+      bookings(section).sort((a,b) => (a.bookedDate||a.date||'').localeCompare(b.bookedDate||b.date||''))
+        .forEach(e => rows.push([
+          e.bookedDate||'', e.date||'', SECTION_LABEL[section], e.project||'', e.type||'', e.union||'', e.role||'',
+          e.bookedPay||0, e.director||'', e.photographer||'', e.dp||'', e.cd||'', e.source||'', e.platform||'', [e.notes, e.bookedNotes].filter(Boolean).join(' | ')
+        ]));
+    });
+    store.background.slice().sort((a,b) => (a.date||'').localeCompare(b.date||''))
+      .forEach(e => rows.push([
+        e.date||'', '', 'Background', e.project||'', e.type||'', e.union||'', '',
+        e.pay||0, '', e.photographer||'', e.dp||'', e.company||'', '', e.site||'', e.notes||''
+      ]));
+    if (rows.length === 1) { alert('No bookings yet. When you book a job, it goes on this sheet.'); return; }
+    const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+    const csv = rows.map(r => r.map(q).join(',')).join('\n');
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'my_bookings.csv';
+    a.click(); URL.revokeObjectURL(a.href);
+    showToast('Bookings sheet downloaded — opens in Numbers');
+  }
+
+  function downloadReport() { withYear(ALL_YEARS, downloadReportInner); }
+  function downloadReportInner() {
+    const gen = new Date().toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+    const y = String(new Date().getFullYear());
+    const inY = d => (d||'').startsWith(y);
+    const actAud = auditions('acting').filter(e => inY(e.date)).length;
+    const actBook = bookings('acting').filter(e => inY(e.bookedDate||e.date));
+    const voAud = auditions('voiceover').filter(e => inY(e.date)).length;
+    const voBook = bookings('voiceover').filter(e => inY(e.bookedDate||e.date));
+    const modBook = bookings('modeling').filter(e => inY(e.bookedDate||e.date));
+    const bgJobs = store.background.filter(e => inY(e.date));
+    const cbY = allCallbacks().filter(e => inY(e.date)).length;
+    const thisYear = list => list.filter(e => inY(e.date));
+    const ent = actBook.reduce((s,e)=>s+(e.bookedPay||0),0) + voBook.reduce((s,e)=>s+(e.bookedPay||0),0)
+      + modBook.reduce((s,e)=>s+(e.bookedPay||0),0) + bgJobs.reduce((s,e)=>s+(e.pay||0),0);
+    const cds = cdList();
+    const logRows = list => list.sort(byDateDesc).map(e =>
+      `<tr class="${e.status==='booked'?'booked':''}"><td>${e.date ? fmtDate(e.date) : ''}</td><td>${esc(e.project)}</td><td>${esc((e.role||'').split('\n')[0])}</td><td>${esc(e.cd||'')}</td><td>${e.status==='booked'?'BOOKED '+(e.bookedPay?fmtMoney(e.bookedPay):''):(e.status==='callback'?'Callback':'Auditioned')}</td></tr>`).join('');
+    const html = `<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><title>IArtist — Summary</title>
+<style>
+  body { font-family: Georgia, serif; color: #26313B; background: #fff; max-width: 800px; margin: 0 auto; padding: 40px 24px; font-size: 18px; line-height: 1.6; }
+  h1 { font-size: 2rem; color: #800020; margin-bottom: 4px; }
+  .sub { color: #5C6870; margin-bottom: 30px; font-size: 1rem; }
+  .statrow { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 30px; }
+  .stat { flex: 1; min-width: 130px; border: 2px solid #405F7F; border-radius: 12px; padding: 14px; text-align: center; }
+  .stat .v { font-size: 2rem; font-weight: bold; color: #800020; }
+  .stat .l { font-size: 0.85rem; color: #5C6870; }
+  h2 { font-size: 1.3rem; color: #405F7F; border-bottom: 2px solid #405F7F; padding-bottom: 6px; margin: 32px 0 12px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  th { text-align: left; border-bottom: 2px solid #A4ABAF; padding: 8px 10px; font-size: 0.82rem; text-transform: uppercase; color: #5C6870; }
+  td { padding: 8px 10px; border-bottom: 1px solid #E1E1E1; vertical-align: top; }
+  .booked { font-weight: bold; } .booked td:last-child { color: #800020; }
+  @media print { body { padding: 10px; } }
+</style></head><body>
+<h1>IArtist — ${y}</h1>
+<div class="sub" style="color:#800020">Created by Carlos Flores, actor and photographer — karloz.art — Copyright &copy; 2026 Carlos Flores. All rights reserved.</div>
+<div class="sub">Generated ${gen}</div>
+<div class="statrow">
+  <div class="stat"><div class="v">${actAud}</div><div class="l">Acting Auditions</div></div>
+  <div class="stat"><div class="v">${actBook.length}</div><div class="l">Acting Bookings</div></div>
+  <div class="stat"><div class="v">${voAud}</div><div class="l">Voiceover Auditions</div></div>
+  <div class="stat"><div class="v">${voBook.length}</div><div class="l">Voiceover Bookings</div></div>
+  <div class="stat"><div class="v">${modBook.length}</div><div class="l">Modeling Bookings</div></div>
+  <div class="stat"><div class="v">${cbY}</div><div class="l">Callbacks</div></div>
+  <div class="stat"><div class="v">${bgJobs.length}</div><div class="l">Background Jobs</div></div>
+  <div class="stat"><div class="v">${fmtMoney(ent)}</div><div class="l">Entertainment Total</div></div>
+</div>
+${cds.length ? `<h2>Casting Directors Who Call Me In</h2>
+<table><thead><tr><th>Name</th><th>Called In</th><th>Callbacks</th><th>Booked</th><th>Phone</th></tr></thead><tbody>
+${cds.map(c => `<tr><td>${esc(c.name)}</td><td>${c.seen}</td><td>${c.callbacks}</td><td>${c.booked}</td><td>${esc((store.cdInfo[c.key]||{}).phone || c.phone || '')}</td></tr>`).join('')}
+</tbody></table>` : ''}
+<h2>Acting Log</h2>
+<table><thead><tr><th>Date</th><th>Project</th><th>Role</th><th>Casting Director</th><th>Result</th></tr></thead><tbody>
+${logRows(thisYear(store.acting))}</tbody></table>
+${thisYear(store.voiceover).length ? `<h2>Voiceover Log</h2>
+<table><thead><tr><th>Date</th><th>Project</th><th>Role</th><th>Casting Director</th><th>Result</th></tr></thead><tbody>
+${logRows(thisYear(store.voiceover))}</tbody></table>` : ''}
+${thisYear(store.modeling).length ? `<h2>Modeling Log</h2>
+<table><thead><tr><th>Date</th><th>Project</th><th>Role</th><th>Casting Director</th><th>Result</th></tr></thead><tbody>
+${logRows(thisYear(store.modeling))}</tbody></table>` : ''}
+${thisYear(store.background).length ? `<h2>Background Log</h2>
+<table><thead><tr><th>Date</th><th>Job</th><th>Company</th><th>Money</th></tr></thead><tbody>
+${thisYear(store.background).sort(byDateDesc).map(e => `<tr><td>${e.date?fmtDate(e.date):''}</td><td>${esc(e.project)}</td><td>${esc([e.company,e.site].filter(Boolean).join(' / '))}</td><td>${fmtMoney(e.pay)}</td></tr>`).join('')}
+</tbody></table>` : ''}
+</body></html>`;
+    const blob = new Blob([html], { type: 'text/html' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'my-acting-journey-summary.html';
+    a.click(); URL.revokeObjectURL(a.href);
+    showToast('Summary report downloaded');
+  }
+
+  // ============ BACKUP AND RESTORE ============
+  function backupEverything() {
+    const payload = { app: 'my-career-journey', v: 2, savedOn: new Date().toISOString(), data: store };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'my-acting-journey-backup-' + todayISO() + '.json';
+    a.click(); URL.revokeObjectURL(a.href);
+    showToast('Backup file saved');
+  }
+
+  function restoreEverything(input) {
+    const file = input.files && input.files[0];
+    input.value = '';
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function () {
+      let incoming = null;
+      try {
+        const parsed = JSON.parse(reader.result);
+        incoming = parsed && parsed.data ? parsed.data : parsed;
+      } catch { showToast('That file could not be read'); return; }
+      const lists = ['acting','voiceover','modeling','background'];
+      if (!incoming || !lists.some(k => Array.isArray(incoming[k]))) { showToast('That is not a backup file'); return; }
+      const count = lists.reduce((n,k) => n + (Array.isArray(incoming[k]) ? incoming[k].length : 0), 0);
+      const days = Object.keys(incoming.diary || {}).length;
+      if (!confirm('This backup holds ' + count + ' entries and ' + days + ' diary days.\n\nRestoring REPLACES everything currently in this browser. Continue?')) return;
+      const s = freshStore();
+      lists.forEach(k => { if (Array.isArray(incoming[k])) s[k] = incoming[k]; });
+      s.diary = incoming.diary || {};
+      s.files = incoming.files || {};
+      s.cdInfo = incoming.cdInfo || {};
+      s.peopleInfo = incoming.peopleInfo || {};
+      s.settings = incoming.settings || {};
+      store = normaliseUnions(s);
+      if (!saveStore()) { showFace(currentFace); return; }
+      showFace(currentFace);
+      showToast('Everything restored');
+    };
+    reader.readAsText(file);
+  }
+
+  // ============ REFRESH ============
+  function refreshCurrent() {
+    renderYearBar();
+    if (currentFace === 'graphs') renderGraphs();
+    else if (dbSection) renderDbDetail();
+    else renderDbHome();
+  }
+
+  // The credit line rebuilds itself if it is removed from the page.
+  const SPONSOR_HTML =
+    '<a class="sponsor bottom" href="https://getvirtualreader.com" target="_blank" rel="noopener">' +
+    'Created by <b>GetVirtualReader.com</b></a>';
+  const SIGNATURE_HTML = SPONSOR_HTML +
+    '<div class="made">This app was created by Carlos Flores, actor and photographer.</div>' +
+    '<a class="site" href="https://karloz.art" target="_blank" rel="noopener">karloz.art</a>' +
+    '<div class="legal">Copyright &copy; 2026 Carlos Flores. All rights reserved. ' +
+    'I made this app &mdash; the way it works, the way it looks, and the words in it. ' +
+    'Share this file with anyone you want, just keep it whole and do not change it. ' +
+    'Do not copy it, sell it, or use any part of it to build your own app, and do not take this notice off. ' +
+    'If you do, you are breaking copyright law.</div>' +
+    '<div class="lawhead">The law this is based on &mdash; read it yourself:</div>' +
+    '<div class="laws">' +
+    '<a href="https://www.law.cornell.edu/uscode/text/17/102" target="_blank" rel="noopener">17 U.S. Code &sect;102</a>' +
+    ' &mdash; original work like this is protected the moment it is written.<br>' +
+    '<a href="https://www.law.cornell.edu/uscode/text/17/106" target="_blank" rel="noopener">17 U.S. Code &sect;106</a>' +
+    ' &mdash; only the author may copy it, sell it, or build something new from it.<br>' +
+    '<a href="https://www.law.cornell.edu/uscode/text/17/501" target="_blank" rel="noopener">17 U.S. Code &sect;501</a>' +
+    ' &mdash; anyone who does those things without permission is an infringer.<br>' +
+    '<a href="https://www.law.cornell.edu/uscode/text/17/1202" target="_blank" rel="noopener">17 U.S. Code &sect;1202</a>' +
+    ' &mdash; taking this notice off is its own separate violation.<br>' +
+    '<a href="https://www.copyright.gov/circs/circ61.pdf" target="_blank" rel="noopener">U.S. Copyright Office, Circular 61</a>' +
+    ' &mdash; how software like this is registered.</div>';
+  function keepSignature() {
+    let top = document.getElementById('sponsor-top');
+    if (!top) {
+      top = document.createElement('a');
+      top.id = 'sponsor-top'; top.className = 'sponsor';
+      top.href = 'https://getvirtualreader.com'; top.target = '_blank'; top.rel = 'noopener';
+      top.innerHTML = 'Created by <b>GetVirtualReader.com</b>';
+      document.body.insertBefore(top, document.body.firstChild);
+    }
+    let f = document.getElementById('app-signature');
+    if (!f) {
+      f = document.createElement('footer');
+      f.className = 'signature'; f.id = 'app-signature';
+      document.body.appendChild(f);
+    }
+    if (f.innerHTML.indexOf('karloz.art') === -1) f.innerHTML = SIGNATURE_HTML;
+  }
+  keepSignature();
+  setInterval(keepSignature, 2000);
+
+  renderYearBar();
+  renderGraphs();
+</script>
+</body>
+</html>
