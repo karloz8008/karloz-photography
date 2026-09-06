@@ -127,7 +127,7 @@ footer a{color:var(--burgundy);font-weight:700}
       <li>Tap Share, then Add to Home Screen.</li>
       <li>From now on open it from your home screen, like any app. Your data stays on your phone.</li>
     </ol>
-    <a class="btn black" href="IArtist.html">Open the app on my phone</a>
+    <a class="btn black" href="IArtist.html" id="open-phone">Open the app on my phone</a>
   </div>
 </section>
 
@@ -138,6 +138,11 @@ footer a{color:var(--burgundy);font-weight:700}
 </div>
 <div class="toast" id="toast">Copied</div>
 <script>
+// Download counter: numbers only, nothing personal.
+function iartistCount(kind){try{var d=JSON.stringify({kind:kind});if(navigator.sendBeacon)navigator.sendBeacon('/api/iartist',d);else fetch('/api/iartist',{method:'POST',body:d,keepalive:true});}catch(e){}}
+iartistCount('page');
+document.getElementById('get-app').addEventListener('click',function(){iartistCount('download')});
+document.getElementById('open-phone').addEventListener('click',function(){iartistCount('phone')});
 document.querySelectorAll('.copy').forEach(function(b){
   b.addEventListener('click',function(){
     var t=document.getElementById(b.dataset.for).textContent;
