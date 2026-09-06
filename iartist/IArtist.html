@@ -600,7 +600,7 @@
       <input type="date" id="diary-date" onchange="diaryDateChanged()">
       <span class="diary-when" id="diary-when"></span>
     </div>
-    <textarea id="diary-text" placeholder="What happened today? Who did you meet? What did you think? Write as much as you want."></textarea>
+    <textarea id="diary-text" oninput="diaryAutosave()" placeholder="What happened today? Who did you meet? What did you think? Write as much as you want."></textarea>
     <div class="diary-actions">
       <button class="btn-save-diary" onclick="diarySaveEntry()">Save This Day</button>
       <button class="btn-small" onclick="diaryPick(todayISO())">Go to Today</button>
@@ -732,7 +732,7 @@
     <div class="form-section">
       <h3>The Basics</h3>
       <div class="form-grid">
-        <div class="field"><label>Audition Date</label><input type="date" id="f-date" /></div>
+        <div class="field"><label id="f-datelabel">Audition Date</label><input type="date" id="f-date" /></div>
         <div class="field full"><label>Project / Product</label><input type="text" id="f-project" placeholder="e.g. Toyota Spring Campaign" /></div>
         <div class="field full" id="fld-type"><label>Type</label><div class="chip-select" id="f-type"></div></div>
         <div class="field full"><label>Union</label><div class="chip-select" id="f-union"></div></div>
@@ -746,7 +746,7 @@
     <div class="form-section">
       <h3>Where and Who</h3>
       <div class="form-grid">
-        <div class="field full"><label>How</label><div class="chip-select" id="f-format"></div></div>
+        <div class="field full" id="fld-format"><label>How</label><div class="chip-select" id="f-format"></div></div>
         <div class="field full"><label>Location / Studio</label><input type="text" id="f-where" placeholder="Casting office, studio, or self-tape at home" /></div>
         <div class="pair"><div class="field"><label>Casting Director</label><input type="text" id="f-cd" list="cd-datalist" placeholder="Their name" /><datalist id="cd-datalist"></datalist></div><div class="field"><label>Email</label><input type="email" id="f-cdemail" placeholder="Their email address" /></div></div>
         <div class="field full"><label>Casting Company</label><input type="text" id="f-cdcompany" placeholder="The casting office" /></div>
@@ -758,9 +758,9 @@
     </div>
 
     <div class="form-section">
-      <h3>The Audition</h3>
+      <h3 id="aud-section-title">The Audition</h3>
       <div class="form-grid">
-        <div class="field full"><label>Self-Tape Submitted</label><input type="text" id="f-tapelink" placeholder="Paste a link (Dropbox, Drive) or a video file from your computer" />
+        <div class="field full" id="fld-tapelink"><label>Self-Tape Submitted</label><input type="text" id="f-tapelink" placeholder="Paste a link (Dropbox, Drive) or a video file from your computer" />
           <div class="hint">Mac: right-click the video in Finder, hold Option, choose "Copy as Pathname", paste it here.</div>
         </div>
         <div class="field full"><label>Notes</label><textarea id="f-notes" placeholder="Notes from your agent, manager or casting director — or a note to yourself"></textarea></div>
@@ -985,8 +985,8 @@
     return s;
   }
   function loadStore() {
-    let raw = null;
-    try { raw = JSON.parse(localStorage.getItem(KEY)); } catch {}
+    let raw = null, rawText = '';
+    try { rawText = localStorage.getItem(KEY) || ''; raw = JSON.parse(rawText); } catch {}
     if (raw && raw.v === 2) {
       const s = freshStore();
       ['acting','voiceover','modeling','background'].forEach(k => { if (Array.isArray(raw[k])) s[k] = raw[k]; });
@@ -1003,6 +1003,11 @@
       const s = migrateOld(raw);
       return normaliseUnions(moveModelingAuditions(splitModeling(s)));
     }
+    if (rawText.trim()) {
+      // Something is saved but cannot be read. Keep it aside untouched and say so.
+      try { localStorage.setItem(KEY + '_unreadable_' + Date.now(), rawText); } catch {}
+      alert('The saved data in this browser could not be read. It was NOT deleted: a copy is kept aside. Restore from your last Export file, or contact the app creator at karloz.art.');
+    }
     // Brand-new browser: start empty.
     return normaliseUnions(moveModelingAuditions(splitModeling(freshStore())));
   }
@@ -1013,9 +1018,19 @@
       return false;
     }
   }
+  // Attached files that no record points to any more (a cancelled form, a deleted job) are dropped.
+  function pruneFiles(s) {
+    const used = new Set();
+    ['acting','voiceover','modeling','background'].forEach(k => (s[k]||[]).forEach(e => {
+      String(e.docs||'').replace(/#([a-z0-9]+)/g, (m, id) => { used.add(id); return m; });
+    }));
+    Object.keys(s.files||{}).forEach(id => { if (!used.has(id)) delete s.files[id]; });
+    return s;
+  }
   let store = loadStore();
   if (!store.diary) store.diary = {};
   if (!store.files) store.files = {};
+  pruneFiles(store);
   saveStore();
 
   // ============ SHARED DATA HELPERS ============
@@ -1163,6 +1178,9 @@
       saveStore();
     }
   }
+  let diaryTimer = null;
+  function diaryAutosave() { clearTimeout(diaryTimer); diaryTimer = setTimeout(diaryKeepTyping, 800); }
+  window.addEventListener('beforeunload', diaryKeepTyping);
   function openDiary() {
     document.getElementById('diary-date').value = diaryDate;
     document.getElementById('diary-text').value = diaryText(diaryDate);
@@ -1290,7 +1308,8 @@
   }
   function yearPeriods() {
     const arr = []; const ny = new Date().getFullYear();
-    for (let y = FIRST_YEAR; y <= Math.max(ny, FIRST_YEAR); y++) arr.push({ key: String(y), label: String(y) });
+    const first = Math.min(FIRST_YEAR, ...yearsWithData().map(Number).filter(n => n > 1900));
+    for (let y = first; y <= Math.max(ny, FIRST_YEAR); y++) arr.push({ key: String(y), label: String(y) });
     return arr;
   }
   function periodOf(iso, mode) { return mode === 'month' ? (iso||'').slice(0,7) : (iso||'').slice(0,4); }
@@ -1542,7 +1561,7 @@
     lineChart('ch-callback', periods, [{ name:'Callbacks', color: COLORS.callback,
       values: countsFor(cbs, audDate, periods, mode) }]);
     document.getElementById('tot-callback').innerHTML =
-      `${SHOWING} <b>${cbs.filter(e => inYear(e.date)).length}</b> callbacks, <b>${cbs.length}</b> all time`;
+      `${SHOWING} <b>${cbs.filter(e => inYear(e.date)).length}</b> callbacks, <b>${withYear(ALL_YEARS, allCallbacks).length}</b> all time`;
 
     // Agency vs Myself (acting + voiceover auditions; modeling has no auditions)
     const allAud = [...auditions('acting').map(e => ({ e, sec: 'acting' })),
@@ -1750,12 +1769,12 @@
           </div>
           <div class="cd-field"><label>Phone</label>
             <input type="tel" class="cd-input" value="${esc(info.phone || c.phone || '')}"
-              onchange="saveCdField('${esc(c.key)}','phone',this.value)" placeholder="Their phone number" /></div>
+              data-k="${esc(c.key)}" onchange="saveCdField(this.dataset.k,'phone',this.value)" placeholder="Their phone number" /></div>
           <div class="cd-field"><label>Email or Website</label>
             <input type="text" class="cd-input" value="${esc(info.contact || c.email || '')}"
-              onchange="saveCdField('${esc(c.key)}','contact',this.value)" placeholder="Email or website" /></div>
+              data-k="${esc(c.key)}" onchange="saveCdField(this.dataset.k,'contact',this.value)" placeholder="Email or website" /></div>
           <div class="cd-field"><label>Notes</label>
-            <textarea class="cd-input" onchange="saveCdField('${esc(c.key)}','notes',this.value)"
+            <textarea class="cd-input" data-k="${esc(c.key)}" onchange="saveCdField(this.dataset.k,'notes',this.value)"
               placeholder="What they like, who the associate is...">${esc(info.notes||'')}</textarea></div>
         </div>`;
       }).join('');
@@ -1779,11 +1798,11 @@
           const nm = (e[f.name]||'').trim();
           if (!nm) return;
           const k = cdKey(nm);
-          if (!map[k]) map[k] = { key: k, name: nm, roles: [], email: '', jobs: 0, last: '', projects: [] };
+          if (!map[k]) map[k] = { key: k, name: nm, roles: [], email: '', jobs: 0, last: '', projects: [], ids: new Set() };
           const c = map[k];
           if (!c.roles.includes(f.role)) c.roles.push(f.role);
           if (e[f.email]) c.email = e[f.email];
-          c.jobs++;
+          if (!c.ids.has(e.id)) { c.ids.add(e.id); c.jobs++; }
           const d = e.bookedDate || e.date || '';
           if (d > c.last) c.last = d;
           if (e.project && !c.projects.includes(e.project)) c.projects.push(e.project);
@@ -1815,12 +1834,12 @@
           </div>
           <div class="cd-field"><label>Email</label>
             <input type="email" class="cd-input" value="${esc(info.email || c.email || '')}"
-              onchange="savePersonField('${esc(c.key)}','email',this.value)" placeholder="Their email address" /></div>
+              data-k="${esc(c.key)}" onchange="savePersonField(this.dataset.k,'email',this.value)" placeholder="Their email address" /></div>
           <div class="cd-field"><label>Phone</label>
             <input type="tel" class="cd-input" value="${esc(info.phone || '')}"
-              onchange="savePersonField('${esc(c.key)}','phone',this.value)" placeholder="Their phone number" /></div>
+              data-k="${esc(c.key)}" onchange="savePersonField(this.dataset.k,'phone',this.value)" placeholder="Their phone number" /></div>
           <div class="cd-field"><label>Notes</label>
-            <textarea class="cd-input" onchange="savePersonField('${esc(c.key)}','notes',this.value)"
+            <textarea class="cd-input" data-k="${esc(c.key)}" onchange="savePersonField(this.dataset.k,'notes',this.value)"
               placeholder="How you met, what they shoot, who they work for...">${esc(info.notes||'')}</textarea></div>
         </div>`;
       }).join('');
@@ -1933,6 +1952,12 @@
     audSection = section;
     audEditingId = id || null;
     const e = id ? store[section].find(x => x.id === id) : null;
+    // A direct invitation (and every modeling job) had no audition: no audition wording.
+    const directForm = !!(e && e.direct) || section === 'modeling';
+    document.getElementById('f-datelabel').textContent = directForm ? 'Date Booked' : 'Audition Date';
+    document.getElementById('fld-format').style.display = directForm ? 'none' : '';
+    document.getElementById('fld-tapelink').style.display = directForm ? 'none' : '';
+    document.getElementById('aud-section-title').textContent = directForm ? 'The Job' : 'The Audition';
     document.getElementById('aud-title').textContent =
       (e && e.direct) ? SECTION_LABEL[section] + ' Direct Invitation'
                       : (e ? '' : 'New ') + SECTION_LABEL[section] + ' Audition';
@@ -1982,7 +2007,7 @@
     // Booked box
     const booked = e && e.status === 'booked';
     document.getElementById('aud-booked-box').style.display = booked ? '' : 'none';
-    document.getElementById('fld-status').style.display = booked ? 'none' : '';
+    document.getElementById('fld-status').style.display = (booked || directForm) ? 'none' : '';
     if (booked) {
       document.getElementById('f-bookdate').value = e.bookedDate || '';
       document.getElementById('f-bookpay').value = e.bookedPay || '';
@@ -2035,7 +2060,7 @@
       platform: whereAnswer('f-platform-other'),
       notes: document.getElementById('f-notes').value.trim(),
       status: booked ? 'booked' : (audPicked.status || 'auditioned'),
-      hadCallback: (existing && existing.hadCallback) || audPicked.status === 'callback' || (existing && existing.status === 'callback'),
+      hadCallback: booked ? !!(existing && (existing.hadCallback || existing.status === 'callback')) : audPicked.status === 'callback',
       direct: existing ? !!existing.direct : false,
       bookedDate: booked ? document.getElementById('f-bookdate').value : '',
       bookedPay: booked ? (parseFloat(document.getElementById('f-bookpay').value) || 0) : 0,
@@ -2061,6 +2086,7 @@
     if (!audEditingId) return;
     if (!confirm('Delete this record? This cannot be undone.')) return;
     store[audSection] = store[audSection].filter(x => x.id !== audEditingId);
+    pruneFiles(store);
     if (!saveStore()) return;
     closeOverlay('ov-aud'); refreshCurrent(); showToast('Deleted');
   }
@@ -2068,8 +2094,10 @@
     if (!audEditingId) return;
     if (!confirm('Remove the booking from this audition? The audition itself stays.')) return;
     const e = store[audSection].find(x => x.id === audEditingId);
-    if (e && e.direct) { alert('This was a direct invitation. There was no audition to remove. Delete the record instead if it is wrong.'); return; }
-    if (e) { e.status = 'auditioned'; e.bookedDate = ''; e.bookedPay = 0; e.bookedNotes = ''; saveStore(); }
+    if (audSection === 'modeling' || (e && e.direct)) { alert('This was a direct invitation. There was no audition to remove. Delete the record instead if it is wrong.'); return; }
+    if (!e) return;
+    e.status = 'auditioned'; e.bookedDate = ''; e.bookedPay = 0; e.bookedNotes = '';
+    if (!saveStore()) return;
     closeOverlay('ov-aud'); refreshCurrent(); showToast('Booking removed');
   }
 
@@ -2142,6 +2170,7 @@
     if (!bgEditingId) return;
     if (!confirm('Delete this background job? This cannot be undone.')) return;
     store.background = store.background.filter(x => x.id !== bgEditingId);
+    pruneFiles(store);
     if (!saveStore()) return;
     closeOverlay('ov-bg'); refreshCurrent(); showToast('Deleted');
   }
@@ -2320,7 +2349,7 @@
       .replace(/[‘’‛]/g, "'").replace(/[“”]/g, '"')
       .replace(/[–—]/g, '-').replace(/…/g, '...')
       .replace(/[·•]/g, '-').replace(/ /g, ' ')
-      .replace(/\r\n?/g, '\n').replace(/[^\x20-\x7E\n]/g, '');
+      .replace(/\r\n?/g, '\n').replace(/[^\x20-\x7E\xA0-\xFF\n]/g, '');
   }
   function pdfWidth(str, size, bold) {
     const t = bold ? PDF_WIDTHS.bold : PDF_WIDTHS.reg;
@@ -2488,7 +2517,7 @@
   // What each DATABASE category puts in its PDF.
   function dbExportPlan(sec) {
     const SEC_MAP = { 'act': 'acting', 'vo': 'voiceover', 'mod': 'modeling' };
-    const money = list => list.reduce((s,e) => s + (e.bookedPay || e.pay || e.amount || 0), 0);
+    const money = list => list.reduce((s,e) => s + (e.bookedPay || e.pay || 0), 0);
     if (sec === 'act-aud' || sec === 'vo-aud') {
       const section = SEC_MAP[sec.split('-')[0]];
       const list = auditions(section).sort(byDateDesc);
@@ -2578,7 +2607,7 @@
     store.background.slice().sort((a,b) => (a.date||'').localeCompare(b.date||''))
       .forEach(e => rows.push([
         e.date||'', '', 'Background', e.project||'', e.type||'', e.union||'', '',
-        e.pay||0, '', e.photographer||'', e.dp||'', e.company||'', '', e.site||'', e.notes||''
+        e.pay||0, '', e.photographer||'', e.dp||'', e.cd||'', '', e.site||'', [e.company ? 'Company: ' + e.company : '', e.notes||''].filter(Boolean).join(' | ')
       ]));
     if (rows.length === 1) { alert('No bookings yet. When you book a job, it goes on this sheet.'); return; }
     const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
@@ -2586,8 +2615,8 @@
     const blob = new Blob(['﻿' + csv], { type: 'text/csv' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'my_bookings.csv';
-    a.click(); URL.revokeObjectURL(a.href);
+    a.download = 'iartist-bookings.csv';
+    a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     showToast('Bookings sheet downloaded — opens in Numbers');
   }
 
@@ -2660,19 +2689,19 @@ ${thisYear(store.background).sort(byDateDesc).map(e => `<tr><td>${e.date?fmtDate
     const blob = new Blob([html], { type: 'text/html' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'my-acting-journey-summary.html';
-    a.click(); URL.revokeObjectURL(a.href);
+    a.download = 'iartist-summary.html';
+    a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     showToast('Summary report downloaded');
   }
 
   // ============ BACKUP AND RESTORE ============
   function backupEverything() {
-    const payload = { app: 'my-career-journey', v: 2, savedOn: new Date().toISOString(), data: store };
+    const payload = { app: 'iartist', v: 2, savedOn: new Date().toISOString(), data: store };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'my-acting-journey-backup-' + todayISO() + '.json';
-    a.click(); URL.revokeObjectURL(a.href);
+    a.download = 'iartist-backup-' + todayISO() + '.json';
+    a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     showToast('Backup file saved');
   }
 
@@ -2688,6 +2717,7 @@ ${thisYear(store.background).sort(byDateDesc).map(e => `<tr><td>${e.date?fmtDate
         incoming = parsed && parsed.data ? parsed.data : parsed;
       } catch { showToast('That file could not be read'); return; }
       const lists = ['acting','voiceover','modeling','background'];
+      if (incoming && Array.isArray(incoming.auditions) && !lists.some(k => Array.isArray(incoming[k]))) incoming = migrateOld(incoming);
       if (!incoming || !lists.some(k => Array.isArray(incoming[k]))) { showToast('That is not a backup file'); return; }
       const count = lists.reduce((n,k) => n + (Array.isArray(incoming[k]) ? incoming[k].length : 0), 0);
       const days = Object.keys(incoming.diary || {}).length;
@@ -2699,9 +2729,12 @@ ${thisYear(store.background).sort(byDateDesc).map(e => `<tr><td>${e.date?fmtDate
       s.cdInfo = incoming.cdInfo || {};
       s.peopleInfo = incoming.peopleInfo || {};
       s.settings = incoming.settings || {};
-      store = normaliseUnions(s);
-      if (!saveStore()) { showFace(currentFace); return; }
-      showFace(currentFace);
+      const prev = store;
+      store = pruneFiles(normaliseUnions(moveModelingAuditions(splitModeling(s))));
+      const ta = document.getElementById('diary-text');
+      if (ta) ta.value = diaryText(diaryDate);
+      if (!saveStore()) { store = prev; if (ta) ta.value = diaryText(diaryDate); showFace(currentFace); showToast('Nothing was changed'); return; }
+      showFace(currentFace); refreshCurrent();
       showToast('Everything restored');
     };
     reader.readAsText(file);
