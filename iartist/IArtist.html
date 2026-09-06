@@ -505,6 +505,14 @@
   .signature .laws a { color: var(--ink); }
   .toast { background: var(--ink); color: var(--lantern); border: 3px solid var(--lantern); border-radius: 0; box-shadow: 6px 6px 0 rgba(0,0,0,.4); }
 
+  /* --- Export / Import, always in sight at the top right --- */
+  .top-tools { display: flex; justify-content: flex-end; gap: 12px; margin: 0 0 14px; }
+  .btn-tool {
+    background: var(--card); color: var(--ink); border: 3px solid var(--ink); border-radius: 0; box-shadow: 4px 4px 0 var(--ink);
+    font-family: 'Atkinson Hyperlegible', sans-serif; font-size: 1.05rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+    padding: 12px 22px; cursor: pointer; min-width: 120px;
+  }
+  .btn-tool:active { transform: translate(4px, 4px); box-shadow: none; }
 </style>
 </head>
 <body>
@@ -512,6 +520,11 @@
 <a class="sponsor" id="sponsor-top" href="https://getvirtualreader.com" target="_blank" rel="noopener">
   Created by <b>GetVirtualReader.com</b>
 </a>
+
+<div class="top-tools">
+  <button class="btn-tool" onclick="backupEverything()" title="Save all your data to one file">Export</button>
+  <button class="btn-tool" onclick="document.getElementById('restore-file').click()" title="Load a file you exported before">Import</button>
+</div>
 
 <header>
   <h1>IArtist</h1>
