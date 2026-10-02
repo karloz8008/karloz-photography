@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Actor Headshots &amp; FAQ | Karloz Photography Los Angeles</title>
+  <meta name="description" content="How actor headshot sessions work at Karloz Photography in Burbank, Los Angeles. Looks, retouching, turnaround, and answers to common questions." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* FAQ page only (Carlos, Oct 2 2026) */
+    .faq-page { max-width: 820px; margin: 0 auto; padding: 56px 60px 40px; }
+    .faq-page section { margin-bottom: 64px; scroll-margin-top: calc(var(--nav-h) + 24px); }
+    .faq-page h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 40px; font-weight: 300; line-height: 1.1;
+      color: var(--cream); margin: 48px 0 18px;
+    }
+    .faq-page h3 {
+      font-size: 11px; font-weight: 400; letter-spacing: 0.3em;
+      text-transform: uppercase; color: var(--gold); margin: 40px 0 14px;
+    }
+    .faq-page p { font-size: 16px; color: rgba(238,229,218,0.78); line-height: 1.9; margin-bottom: 18px; }
+    .faq-page .lead-q {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: 28px; line-height: 1.35; color: var(--cream);
+    }
+    .faq-page a.inline { color: var(--gold); border-bottom: 1px solid rgba(201,169,110,0.4); }
+    .faq-page a.inline:hover { color: var(--cream); }
+    .faq-page .next-link { margin-top: 28px; font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; }
+    .faq-cta { text-align: center; margin: 28px 0 8px; }
+    .faq-page details { border-bottom: 1px solid var(--cream-20); }
+    .faq-page details:first-of-type { border-top: 1px solid var(--cream-20); }
+    .faq-page summary {
+      cursor: pointer; list-style: none; padding: 20px 36px 20px 0; position: relative;
+      font-size: 17px; font-weight: 400; color: var(--cream); line-height: 1.5;
+    }
+    .faq-page summary::-webkit-details-marker { display: none; }
+    .faq-page summary::after {
+      content: "+"; position: absolute; right: 4px; top: 16px;
+      font-size: 24px; font-weight: 200; color: var(--gold);
+    }
+    .faq-page details[open] summary::after { content: "–"; }
+    .faq-page details p { padding-right: 36px; }
+    @media (max-width: 900px) {
+      .faq-page { padding: 40px 24px 32px; }
+      .faq-page h2 { font-size: 32px; }
+      .faq-page .lead-q { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-name">KARLOZ</span>
+        <span class="logo-sub">Photography</span>
+        <span class="logo-tag">Portraits &amp; Headshots · Los Angeles</span>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html" class="nav-link">Portfolio</a>
+        <a href="testimonials.html" class="nav-link">Testimonials</a>
+        <a href="about.html" class="nav-link">About &amp; Contact</a>
+        <a href="faq.html" class="nav-link active">FAQ</a>
+        <a href="iartist/" class="nav-link">iArtist</a>
+        <a href="https://calendar.app.google/1TLee6nQDUrWV8zC6" target="_blank" rel="noopener" class="nav-cta">Book a Session</a>
+      </nav>
+      <button class="hamburger" aria-label="Open menu" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-nav" id="mobileNav">
+      <a href="index.html" onclick="toggleMenu()">Portfolio</a>
+      <a href="testimonials.html" onclick="toggleMenu()">Testimonials</a>
+      <a href="about.html" onclick="toggleMenu()">About &amp; Contact</a>
+      <a href="faq.html" onclick="toggleMenu()">FAQ</a>
+      <a href="iartist/" onclick="toggleMenu()">iArtist</a>
+      <a href="https://calendar.app.google/1TLee6nQDUrWV8zC6" target="_blank" rel="noopener" onclick="toggleMenu()">Book a Session</a>
+    </div>
+  </header>
+
+  <div style="max-width:1400px;margin:0 auto;">
+    <section class="page-hero">
+      <p class="eyebrow">Actor Headshots</p>
+      <h1><span class="cut">Your<span class="disp-c" aria-hidden="true">Your</span><span class="disp-m" aria-hidden="true">Your</span><span class="glare" aria-hidden="true">Your</span><span class="glare" style="animation-delay:-2.75s" aria-hidden="true">Your</span></span><br /><em class="cut gold">Headshot<span class="disp-c" aria-hidden="true">Headshot</span><span class="disp-m" aria-hidden="true">Headshot</span><span class="glare" aria-hidden="true">Headshot</span><span class="glare" style="animation-delay:-2.75s" aria-hidden="true">Headshot</span></em></h1>
+    </section>
+  </div>
+
+  <main class="faq-page">
+
+    <!-- PART 1: OPENING -->
+    <section id="opening">
+      <p class="lead-q">When was the last time you updated your headshots? How long have you been using the same photo? Take a moment and really think about it.</p>
+      <p>Now let me ask you something else. Do you see headshots as an expense, or just something nice to have?</p>
+      <p>I'm not here to prove you wrong, but here's the truth: your headshot is the main tool of your acting career. It's the key that opens the door. That makes it an investment, not an expense. When you invest in yourself, you get something back. If you don't, how can you expect anything in return?</p>
+      <p>The actors I see booking work all have one habit in common, and the industry articles I read say the same thing: they update their headshots, resumes, and demo reels often.</p>
+      <p>Your headshot is the first thing a casting director sees. It's what gets you called in. And the more you audition, the more you book. You can be an amazing actor, but if your photo doesn't get a click, nobody gets to see what you can do. Even your demo reel lives behind your headshot. So it all starts there.</p>
+      <p class="next-link"><a href="#sessions" class="inline">Ready to invest in yourself? See how my sessions work.</a></p>
+    </section>
+
+    <!-- PART 2: SERVICES -->
+    <section id="sessions">
+      <h2>How My Sessions Work</h2>
+      <p>You pick how many looks you want. A look is one outfit with its own backdrop and lighting. Say you wear a white shirt, a jean jacket, and a hat. That's one look. Then you change into a gray suit, and I change the backdrop and lighting to match. That's your second look. A casual t-shirt and glasses could be your third.</p>
+      <p>You can book with just one look, but I usually recommend three to five. From what casting directors have told me, that's the ideal number for your profile.</p>
+      <p>I also suggest doing all your looks with one photographer. Every photographer has a style. When your profile mixes three different photographers, the photos don't match. It's like a song that keeps changing key. With me, the wardrobe and lighting change, but the style stays the same, so your profile feels like one story.</p>
+
+      <h2>What You Get</h2>
+      <p>For every look, you get 30 to 100 photos, all color corrected. You choose your favorite, and I give it a full professional retouch: skin, eyes, hair, and color. Polished, but still true to you. You get it in two versions, one for print and one for casting sites and social media. I usually crop them 4x5, or 5x7 if you prefer.</p>
+      <p>Book three or more looks, and as my gift to you, I'll retouch three photos from every look instead of one. Want even more retouched photos? Just ask.</p>
+
+      <h2>After the Shoot</h2>
+      <p>Your photos are ready in 24 to 48 hours. You make your picks, I retouch them, and then I send you everything in one folder: your retouched photos plus every photo from the session. There's no deposit to book. You pay when your photos are ready, and then you download them. Need them the same day? Rush delivery is available, so ask me for details.</p>
+
+      <h2>Hair and Makeup</h2>
+      <p>I don't provide hair and makeup, but you're more than welcome to bring your own artist.</p>
+
+      <h2>I'm Here to Help Beyond the Camera</h2>
+      <p>I love helping actors plan their wardrobe. Bring a few outfits or send me pictures before the shoot, and we'll choose together. Tell me the characters you want to play, and we'll build your looks around them. If you're new or just need advice, I'm happy to share what I know about the industry. Remember, I'm an actor too. I can point you to the sites where you can submit yourself for casting work. And if you need a personal website as an actor, I can build that for you too.</p>
+
+      <h2>Ready to Book?</h2>
+      <p>Call me, email me, or send me a message. For pricing and available dates, just reach out and I'll take care of you.</p>
+      <div class="faq-cta">
+        <a href="https://calendar.app.google/1TLee6nQDUrWV8zC6" target="_blank" rel="noopener" class="btn-primary">Book a Session</a>
+      </div>
+      <p style="text-align:center;"><a href="about.html#contact" class="inline">Call, text, email, or Instagram</a></p>
+      <p class="next-link" style="text-align:center;"><a href="#faq" class="inline">Have questions? See my FAQ.</a></p>
+    </section>
+
+    <!-- PART 3: FAQ -->
+    <section id="faq">
+      <h2>Frequently Asked Questions</h2>
+
+      <h3>The Session</h3>
+      <details><summary>How long does a session take?</summary>
+        <p>Each look takes about 30 to 45 minutes. So a three-look session is around two hours, depending on wardrobe changes.</p></details>
+      <details><summary>Where is your studio, and is there parking?</summary>
+        <p>My studio is a private home studio in downtown Burbank. I have a parking spot reserved just for you, or you can park on the street. I'll send you the exact address once your session is booked.</p></details>
+      <details><summary>Do you shoot outdoors?</summary>
+        <p>Yes. Besides my studio, I also shoot outdoors and on location. Anywhere within 10 miles of my Burbank studio has no extra cost. Farther than that, I add a small travel fee for mileage and time.</p></details>
+      <details><summary>What if it rains on my outdoor shoot day?</summary>
+        <p>No problem. If bad weather hits, we can move your session into my studio, or reschedule with no late fee.</p></details>
+      <details><summary>Do you shoot commercial and theatrical looks?</summary>
+        <p>Yes, both. Commercial looks are bright and friendly, like the person in a TV ad. Theatrical looks are more serious and dramatic, for film and TV roles.</p></details>
+      <details><summary>I get nervous on camera. How will you help me?</summary>
+        <p>That's my favorite part of the job. You don't need to be a model or know how to pose. I'll direct you every step of the way, and you can play your own music while we shoot. All you have to do is relax and have fun. Most clients are surprised how much they enjoy it.</p></details>
+      <details><summary>Can I see my photos during the shoot?</summary>
+        <p>Yes, of course. Every so often, I'll stop and show you a few shots so you can see how it's going and we can adjust together. I don't show every single photo, because checking each one breaks your focus and can turn a 30-minute look into an hour.</p></details>
+
+      <h3>Preparing</h3>
+      <details><summary>How should I prepare for my shoot?</summary>
+        <p>Send me photos of your wardrobe options or your mood board before the session, so we can plan your looks together. Please arrive with your hair and makeup ready. If you'd like to bring your own makeup artist, that's welcome, but there's an extra $50 studio time fee, since hair and makeup can take a while and it extends the session.</p></details>
+      <details><summary>What should I wear, and what should I avoid?</summary>
+        <p>Wear what fits the roles you want to play, and we'll plan your looks together. One thing to avoid: shiny or shimmery makeup, unless we're going for that look on purpose. It creates bright shiny spots on your skin that show up in every photo.</p></details>
+      <details><summary>Can I wear glasses or jewelry?</summary>
+        <p>Absolutely. Bring glasses, jewelry, earrings, hats, scarves, or bandanas. Props help too. Going for a doctor role? Bring a white coat. Small details like these help build your characters.</p>
+        <p>If you plan to wear glasses, please let me know before the shoot. Glasses need a different lighting setup, and anti-glare lenses or frames without lenses work best.</p></details>
+
+      <h3>Who Can Come</h3>
+      <details><summary>Can I bring a friend or family member?</summary>
+        <p>Yes, you're welcome to bring one guest. I just ask that they relax quietly while we work, maybe with a book or their phone. This keeps the session focused on you, because the best expressions come when you're not distracted. Please ask your guest not to touch the cameras, lights, or computer.</p></details>
+      <details><summary>Do you do group sessions?</summary>
+        <p>My home studio is cozy, so sessions are for one or two people only. Siblings, couples, or acting partners are welcome.</p></details>
+      <details><summary>Do you photograph kids?</summary>
+        <p>Yes, I welcome young actors. A parent or legal guardian must be present for the whole session and bring a photo ID.</p></details>
+
+      <h3>Your Photos</h3>
+      <details><summary>What's your editing style? Will I still look like me?</summary>
+        <p>Yes, you'll always look like you. You can see my style in my <a href="index.html" class="inline">portfolio</a>. I only remove temporary things, like a pimple or redness. Then I enhance sharpness, hair detail, color, and tone. Want a more natural look, maybe for background work? Just tell me, and I'll keep retouching to a minimum.</p></details>
+      <details><summary>Can I use my photos anywhere?</summary>
+        <p>Yes, for your own career. Once your session is paid, use them on casting sites, social media, your website, and in print. I keep the copyright, so for any other use, like ads or a magazine wanting to buy a photo, just ask me first.</p></details>
+      <details><summary>What if I don't like my photos?</summary>
+        <p>I don't offer reshoots or refunds. If you don't love your photos, you don't pay, and the photos stay with me. That's why I take time before the shoot to talk about your wardrobe and your vision. A mood board helps a lot, so I can see exactly what you want. Because of that, it's very rare for a client to leave unhappy.</p></details>
+
+      <h3>Booking and Payment</h3>
+      <details><summary>How far in advance should I book?</summary>
+        <p>Anytime works. Tap <a href="https://calendar.app.google/1TLee6nQDUrWV8zC6" target="_blank" rel="noopener" class="inline">Book a Session</a>, check the open dates, and pick any day and time that isn't already taken.</p></details>
+      <details><summary>How can I pay?</summary>
+        <p>I accept Zelle, Venmo, PayPal, or cash. Sorry, no checks.</p></details>
+      <details><summary>What if I need to cancel or reschedule?</summary>
+        <p>No problem, life happens. Just let me know as early as you can. If you cancel or reschedule on the same day as your session, there's a $50 late fee to book a new date.</p></details>
+      <details><summary>Can I buy a session as a gift?</summary>
+        <p>Yes. I don't have printed gift certificates, but you can prepay a session for anyone: your child, partner, or a friend. They just pick an open date and time and come in. Share this page with them so they know what to bring and what to expect. Please note: prepaid sessions are non-refundable.</p></details>
+
+      <div class="faq-cta" style="margin-top:48px;">
+        <a href="https://calendar.app.google/1TLee6nQDUrWV8zC6" target="_blank" rel="noopener" class="btn-primary">Book a Session</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="logo">
+        <span class="logo-name">KARLOZ</span>
+        <span class="logo-sub">Photography</span>
+      </div>
+      <div class="footer-contact">
+        <a href="mailto:karloz8008@gmail.com">karloz8008@gmail.com</a>
+        <a href="https://www.instagram.com/karloz8008" target="_blank" rel="noopener">@karloz8008</a>
+        <a href="tel:+18185682983">(818) 568-2983</a>
+      </div>
+    </div>
+    <div class="footer-nav">
+      <a href="index.html">Portfolio</a>
+      <a href="testimonials.html">Testimonials</a>
+      <a href="about.html">About &amp; Contact</a>
+      <a href="faq.html">FAQ</a>
+      <a href="iartist/">iArtist</a>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Karloz Photography · Los Angeles, CA · All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
