@@ -154,9 +154,11 @@
     <div class="grid-item session-extra" data-session="delia" data-label="Delia Niya" data-full="photos/delia_niya4.jpg">
       <img src="photos/thumbs/delia_niya4.jpg" alt="Headshot photographer Los Angeles" loading="lazy" /></div>
 
-    <!-- DyVaunte Bordley -->
-    <div class="grid-item" data-session="dyvaunte" data-label="DyVaunte Bordley" data-full="photos/dyvaunte_bordley.jpg">
-      <img src="photos/thumbs/dyvaunte_bordley.jpg" alt="Actor headshot Los Angeles" loading="lazy" /></div>
+    <!-- Darrin Barber -->
+    <div class="grid-item" data-session="darrin_barber" data-label="Darrin Barber" data-full="photos/darrin_barber.jpg">
+      <img src="photos/thumbs/darrin_barber.jpg" alt="Actor headshot Los Angeles" loading="lazy" /></div>
+    <div class="grid-item session-extra" data-session="darrin_barber" data-label="Darrin Barber" data-full="photos/darrin_barber2.jpg">
+      <img src="photos/thumbs/darrin_barber2.jpg" alt="Actor headshot Los Angeles" loading="lazy" /></div>
 
     <!-- Logynn -->
     <div class="grid-item" data-session="logynn" data-label="Logynn" data-full="photos/logynn.jpg">
@@ -323,11 +325,13 @@
     <div class="grid-item session-extra" data-session="aileen" data-label="Aileen Angeles" data-full="photos/aileen_angeles2.jpg">
       <img src="photos/thumbs/aileen_angeles2.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
 
-    <!-- Nefertara -->
-    <div class="grid-item" data-session="nefertara" data-label="Nefertara" data-full="photos/nefertara.jpg">
-      <img src="photos/thumbs/nefertara.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
-    <div class="grid-item session-extra" data-session="nefertara" data-label="Nefertara" data-full="photos/nefertara2.jpg">
-      <img src="photos/thumbs/nefertara2.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
+    <!-- Daniel Nedow -->
+    <div class="grid-item" data-session="daniel_nedow" data-label="Daniel Nedow" data-full="photos/daniel_nedow.jpg">
+      <img src="photos/thumbs/daniel_nedow.jpg" alt="Actor headshot Los Angeles" loading="lazy" /></div>
+    <div class="grid-item session-extra" data-session="daniel_nedow" data-label="Daniel Nedow" data-full="photos/daniel_nedow2.jpg">
+      <img src="photos/thumbs/daniel_nedow2.jpg" alt="Actor headshot Los Angeles" loading="lazy" /></div>
+    <div class="grid-item session-extra" data-session="daniel_nedow" data-label="Daniel Nedow" data-full="photos/daniel_nedow3.jpg">
+      <img src="photos/thumbs/daniel_nedow3.jpg" alt="Actor headshot Los Angeles" loading="lazy" /></div>
 
     <!-- Danielle Koeske -->
     <div class="grid-item" data-session="danielle" data-label="Danielle Koeske" data-full="photos/danielle_koeske.jpg">
@@ -460,6 +464,16 @@
     <div class="grid-item" data-session="nathaniel" data-label="Nathaniel" data-full="photos/nathaniel.jpg">
       <img src="photos/thumbs/nathaniel.jpg" alt="Actor headshot Los Angeles" loading="lazy" /></div>
 
+    <!-- Nefertara -->
+    <div class="grid-item" data-session="nefertara" data-label="Nefertara" data-full="photos/nefertara.jpg">
+      <img src="photos/thumbs/nefertara.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
+    <div class="grid-item session-extra" data-session="nefertara" data-label="Nefertara" data-full="photos/nefertara2.jpg">
+      <img src="photos/thumbs/nefertara2.jpg" alt="Portrait photographer Los Angeles" loading="lazy" /></div>
+
+    <!-- DyVaunte Bordley -->
+    <div class="grid-item" data-session="dyvaunte" data-label="DyVaunte Bordley" data-full="photos/dyvaunte_bordley.jpg">
+      <img src="photos/thumbs/dyvaunte_bordley.jpg" alt="Actor headshot Los Angeles" loading="lazy" /></div>
+
   </div>
 
 
@@ -505,6 +519,47 @@
       <p>&copy; 2025 Karloz Photography · Los Angeles, CA · All rights reserved.</p>
     </div>
   </footer>
+
+  <!-- October Special flyer (added Oct 16 2026) -->
+  <style>
+    .promo-flyer{position:fixed;right:24px;bottom:24px;z-index:450;width:min(360px,calc(100vw - 32px));
+      background:#262424;color:var(--cream);border:1px solid var(--gold);box-shadow:0 24px 60px rgba(0,0,0,0.55);
+      padding:30px 28px 26px;text-align:center;opacity:0;transform:translateY(40px);pointer-events:none;
+      transition:opacity .5s ease,transform .5s ease}
+    .promo-flyer.show{opacity:1;transform:none;pointer-events:auto}
+    .promo-flyer.hide{display:none}
+    .promo-close{position:absolute;top:8px;right:10px;background:none;border:0;color:var(--cream);
+      font-size:26px;line-height:1;cursor:pointer;padding:6px 8px;opacity:.8}
+    .promo-close:hover{opacity:1;color:var(--gold)}
+    .promo-kicker{font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin:0 0 8px}
+    .promo-big{font-family:'Cormorant Garamond',serif;font-size:58px;line-height:1;font-weight:600;color:var(--gold);margin:0}
+    .promo-sub{font-family:'Cormorant Garamond',serif;font-size:24px;line-height:1.25;margin:12px 0 6px;color:var(--cream)}
+    .promo-price{font-family:'Jost',sans-serif;font-size:14px;letter-spacing:.08em;margin:0 0 20px;color:var(--cream-dim)}
+    .promo-price s{opacity:.6;margin-right:8px}
+    .promo-price strong{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:var(--cream);letter-spacing:0;vertical-align:-4px}
+    .promo-flyer .btn-primary{background:linear-gradient(180deg,#f7d98a 0%,#c99a3c 45%,#9a742e 80%,#e3bd62 100%);color:#231c0d;padding:14px 34px}
+    .promo-note{font-family:'Jost',sans-serif;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--cream-dim);margin:14px 0 0}
+    @media (max-width:600px){.promo-flyer{right:16px;left:16px;bottom:16px;width:auto;padding:26px 22px 22px}.promo-big{font-size:50px}}
+  </style>
+  <div class="promo-flyer" id="promoFlyer" role="dialog" aria-label="October Special">
+    <button class="promo-close" id="promoClose" aria-label="Close">&#10005;</button>
+    <p class="promo-kicker">October Special</p>
+    <p class="promo-big">50% OFF</p>
+    <p class="promo-sub">3 Looks + 3 Professional Retouches</p>
+    <p class="promo-price"><s>$500</s> only <strong>$250</strong></p>
+    <a href="https://calendar.app.google/1TLee6nQDUrWV8zC6" target="_blank" rel="noopener" class="btn-primary">Book Now</a>
+    <p class="promo-note">October only &middot; Burbank, Los Angeles</p>
+  </div>
+  <script>
+    (function(){
+      var f=document.getElementById('promoFlyer'),c=document.getElementById('promoClose');
+      if(!f)return;
+      setTimeout(function(){f.classList.add('show');},1200);
+      function close(){f.classList.remove('show');setTimeout(function(){f.classList.add('hide');},500);}
+      c.addEventListener('click',close);
+      document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+    })();
+  </script>
 
   <script src="script.js"></script>
 </body>
