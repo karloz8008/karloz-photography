@@ -5,3 +5,13 @@
   from = "/admin/*"
   to = "/admin/index.html"
   status = 200
+
+[[redirects]]
+  from = "/audition-tracker"
+  to = "/iartist/"
+  status = 301
+
+[[redirects]]
+  from = "/audition-tracker/*"
+  to = "/iartist/:splat"
+  status = 301
